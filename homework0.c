@@ -3,47 +3,67 @@
 #include<string.h>
 #include<stdlib.h>
 
-void get_triangle()
+void put_blanks(int max_count)
+{
+	for(int i = 1; i <= max_count; i++)
+		printf(" ");
+}
+
+void put_sharps(int max_count)
+{
+	for(int i = 1; i <= max_count; i++)
+		printf("#");
+}
+
+void put_triangle()
 {
 	int n = 5;
 
-	for(int i = 1;i < n;i++)
+	for(int i = 1; i < n; i++)
 	{
-		for(int j = 1;j <= n - i;j++)
-		{
-			printf(" ");
-		}
-		for(int j = 1;j <= i * 2 - 1;j++)
-		{
-			printf("#");
-		}
+		// 関数に切り出すと、
+		// 	- 処理内容が端的でわかりやすくなる（わかりやすい関数名の場合）
+		// 	- DRY になる
+		put_blanks(n - i);
+		put_sharps(i * 2 - 1);
 		printf("\n");
 	}
 }
 
-void get_rectangle()
+void put_rectangle()
 {
 	int n = 3;
 
-		for(int i = 1;i <= n;i++)
+		for(int i = 1; i <= n; i++)
 		{
-			for(int j = 1;j <= n;j++)
-			{
-				printf("#");
-			}
+			put_sharps(n);
 			printf("\n");
 		}
 }
 
-bool judgeTrueOrFalse(char str[10])
-{
-	for(int i = 0;i < strlen(str); i++)
-	{
-		if('1' <= str[i] && str[i] <= '2')continue;
-		return false;
-	}
-	return true;
-}
+// 関数名・変数名は、可読性の肝なので、命名規則に遵守する
+// bool isValidInput(char str[10]) // "1\n" ("\n" == 0)
+// {
+	// パターン 1
+	// if (str[1]) return false;
+	// if (str[0] == '1' || str[0] == '2') return true;
+	// return false;
+
+	// パターン 2
+	// if (str[1]) return false;
+	// return str[0] == '1' || str[0] == '2'
+
+	// パターン3
+	// return !str[1] && (str[0] == '1' || str[0] == '2');
+	// str が "12" のとき、
+	// 	 str[1] は '2' になる → '2' > 0, 0 が false なので、
+	//   !str[1] は false になる
+	//   (str[0] == '1' || str[0] == '2') は評価しない
+	// str が "1" のとき、
+	// 	 str[1] は "\n" になる → "\n" は 0 なので、
+	//   !str[1] は true になる
+	//   str[0] は '1' なので、 true が返却される
+// }
 
 int main()
 {
@@ -54,19 +74,19 @@ int main()
 		printf("表記に従って、1or2を入力してください。\n三角形の場合:1\n四角形の場合:2\n数値を入力してください: ");
 		scanf("%s", str);
 	}
-	while(judgeTrueOrFalse(str) == false);
+	// while(!(!str[1] && (str[0] == '1' || str[0] == '2')));
+	while(str[1] || (str[0] != '1' && str[0] != '2'));
 
-	int OneOrTwo = atoi(str);
+	// この時点で str は "1" or "2" が自明なので、変数追加は不要
+	// スネークケースか、キャメルケースかは、意識して使い分ける
+	// int one_or_two = atoi(str);
 
-		if(OneOrTwo == 1)
-		{
-			get_triangle();
-		}
-		else if(OneOrTwo == 2)
-		{
-			get_rectangle();
-		}
-
+	if (strcmp(str, "1"))
+		// 行っている処理は「出力」なので get は不適切、put や print が適切
+		put_triangle();
+	else
+	  // 同上
+		put_rectangle();
 }
 
 /*
