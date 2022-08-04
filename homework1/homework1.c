@@ -1,19 +1,33 @@
 #include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+#include<stdbool.h>
+
+bool isValidInput(char *yen) {
+	for(int i = 0; i < strlen(yen); i++)
+		if(yen[i] < '0' || '9' < yen[i])
+			return false;
+	return true;
+}
 
 int main()
 {
-	int yen,c100,c10,c1;
+	int c100, c10, c1, yen;
+	char strYen[256];
 
-	printf("金額を入力してください: ");
-	scanf("%d",&yen);
+	do {
+		printf("金額を入力してください: ");
+		scanf("%s", strYen);
+	} while(!isValidInput(strYen));
 
+	yen  = atoi(strYen);
 	c100 = yen / 100;
-	yen = yen % 100;
-	c10 = yen / 10;
-	yen = yen % 10;
-	c1 =  yen / 1;
-	
-	printf("100円:%d\n",c100);
+	yen  = yen % 100;
+	c10  = yen / 10;
+	yen  = yen % 10;
+	c1   = yen / 1;
+
+	printf("100円:%d枚\n",c100);
 	printf("10円:%d枚\n",c10);
 	printf("1円:%d枚\n",c1);
 }
