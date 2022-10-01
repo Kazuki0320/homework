@@ -28,15 +28,3 @@ taskSubmit.addEventListener('click', evt => {//クリックされた時に、sub
 	addTasks(task);
 	taskValue.value = '';
 });
-
-// const deleteTasks = (deleteButton) => {
-// 	const chosenTask = deleteButton.closest('li');
-// 	taskList.removeChild(chosenTask);
-// };
-
-// taskSubmit.addEventListener('click', evt => {
-// 	evt.preventDefault();
-// 	const task = taskValue.value;
-// 	addTasks(task);
-// 	taskValue.value = '';
-// });
