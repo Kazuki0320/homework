@@ -17,16 +17,26 @@ const addTasks = (task) => {
 	});
 };
 
-// // 削除ボタンにタスクを消す機能を付与
+const deleteTasks = (deleteButton) => {
+	const chosenTask = deleteButton.closest('li');//親要素と自身の要素から一致する要素をかえす
+	taskList.removeChild(chosenTask);//一致した要素をremoveChildで削除する処理を書く
+};
+
+taskSubmit.addEventListener('click', evt => {//クリックされた時に、submitにもイベントを付与
+	evt.preventDefault();
+	const task = taskValue.value;//taskにtaskValue.valueを代入することで、addTasks関数が呼び出された時に、文字入力をリセットする
+	addTasks(task);
+	taskValue.value = '';
+});
+
 // const deleteTasks = (deleteButton) => {
-//   const chosenTask = deleteButton.closest('li');
-//   taskList.removeChild(chosenTask);
+// 	const chosenTask = deleteButton.closest('li');
+// 	taskList.removeChild(chosenTask);
 // };
 
-// // 追加ボタンをクリックし、イベントを発動（タスクが追加）
 // taskSubmit.addEventListener('click', evt => {
-//   evt.preventDefault();
-//   const task = taskValue.value;
-//   addTasks(task);
-//   taskValue.value = '';
+// 	evt.preventDefault();
+// 	const task = taskValue.value;
+// 	addTasks(task);
+// 	taskValue.value = '';
 // });
