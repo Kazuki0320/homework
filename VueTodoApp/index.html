@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset ="UTF-8">
+		<title>Vue.js App</title>
+		<link rel ="stylesheet" href="main.css">
+	</head>
+	<body>
+		<div id="app">
+			<table>
+				<!--テーブルヘッダー-->
+				<thead>
+					<th>
+						<th class="id">ID</th>
+						<th class="comment">コメント</th>
+						<th class="state">状態</th>
+						<th class="button">-</th>
+					</th>
+				</thead>
+				<tbody>
+					<!--ここに<tr>でTodoの要素を１行づつ繰り返し表示する-->
+					<!--todosデータの各要素のプロパティが使用可能-->
+					<tr v-for="item in todos" v-bind:key="item.id">
+						<th>{{ item.id }}</th>
+						<td>{{ item.comment }}</td>
+						<td class="state">
+							<!--状態変更ボタンのモック-->
+							<button>{{ item.state }}</button>
+							</td>
+							<td class="button">
+								<!--削除ボタンのモック-->
+								<button>削除</button>
+							</td>
+						<!-- 要素の情報 -->
+  					</tr>
+				</tbody>
+			</table>
+			<!--絞り込みラジオボタン-->
+			<!--Todo テーブル-->
+			<!--新規登録フォーム-->	
+		</div>
+		<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+		<script src="main.js"></script>
+	</body>
+</html>
