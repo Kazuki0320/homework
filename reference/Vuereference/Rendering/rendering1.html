@@ -1,0 +1,53 @@
+<!--
+【リストレンダリング】
+・配列などの複雑なデータの表示を制御したいときに使用する
+→v-forでflameworksの配列を指定し、配列の数繰り返す
+繰り返した配列はflameworkに格納され、{{}}で出力される
+-->
+
+<!DOCTYPE <html>
+<html>
+<head>
+	<title>Hello World</title>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+</head>
+<body>
+	<div id="intro">
+		<h1>三大フレームワーク</h1>
+		<ul>
+			<li v-for="flamework in flameworks">{{ flamework }}</li>
+		</ul>
+	</div>
+	<script type="text/javascript">
+		var vue_det = new Vue({
+			el: '#intro',
+			data: {
+				flameworks:['Vue','React','Angular']
+			},
+		});
+	</script>
+</body>
+</html>
+<!-- <!DOCTYPE html>
+<html>
+<head>
+    <title>Hello World</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+</head>
+<body>
+    <div id="intro">
+        <h1>三大フレームワーク</h1>
+        <ul>
+            <li v-for="flamework in flameworks">{{ flamework }}</li>
+        </ul>
+    </div>
+    <script type="text/javascript">
+        var vue_det = new Vue({
+            el: '#intro',
+            data: {
+                flameworks:['vue','react','angular']
+            },
+        });
+    </script>
+</body>
+</html> -->
