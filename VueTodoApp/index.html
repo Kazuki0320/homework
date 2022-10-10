@@ -1,22 +1,74 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta charset ="UTF-8">
+		<meata charset ="UTF-8">
 		<title>Vue.js App</title>
 		<link rel ="stylesheet" href="main.css">
 	</head>
 	<body>
 		<div id="app">
+			<h1>チュートリアルTodoリスト</h1>
+
+			
+			<label v-for="label in options">
+				<input type="radio"
+				  v-model="current"
+				  v-bind:value="label.value">{{ label.label }}
+			  </label>
+
+			<table>
+				<thead>
+				<tr>
+					<th class="id">ID</th>
+					<th class="comment">コメント</th>
+					<th class="state">状態</th>
+					<th class="button">-</th>
+				</tr>
+			</thead>
+			<tr v-for="item in todos" v-bind:key="item.id">
+				<!--要素の情報-->
+				<th>{{ item.id }}</th>
+				<td>{{  item.comment }}</td>
+				<td class="state">
+					<!--状態変更のモック-->
+					<button v-on:click="doChangeState(item)">
+						{{ item.state }}
+					</button>
+				</td>
+				<td class="button">
+					<!--削除ボタンのモック-->
+					<button v-on:click.ctrl="doRemove(item)">
+						削除
+					</button>
+				</td>
+			</tr>
+			</table>
+
+			<h2>新しい作業の追加</h2>
+			<form class="add-form" v-on:submit.prevent="doAdd">
+				<!--コメント入力フォーム-->
+			コメント<input type="text" ref="comment">
+				<!--追加ボタンのモック-->
+				<button type="submit">追加</button>
+			</form>
+
+		</div>
+	</body>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+	<script src="main.js"></script>
+</html>
+	<!-- <body>
+		<div id="app">
 			<h1>チュートリアルToDoリスト</h1>
-			<!--options リストを <label> タグで繰り返し描画して、内側の <input> タグの value 属性には、データ側の label.value データをバインドします。-->
-			<!--v-model ディレクティブを使って、ラジオボタンの選択値と current データを同期させます。 ラジオボタンが変更されると、その要素の label.value が current プロパティへ代入される仕組み-->
+			options リストを <label> タグで繰り返し描画して、内側の <input> タグの value 属性には、データ側の label.value データをバインドします。
+			v-model ディレクティブを使って、ラジオボタンの選択値と current データを同期させます。 ラジオボタンが変更されると、その要素の label.value が current プロパティへ代入される仕組み
 			<label v-for="label in options">
 				<input type="radio"
 				  v-model="current"
 				  v-bind:value="label.value">{{ label.label }}
 			  </label>
 			<table>
-				<!--テーブルヘッダー-->
+				テーブルヘッダ
 				<thead>
 					<th>
 						<th class="id">ID</th>
@@ -26,18 +78,18 @@
 					</th>
 				</thead>
 				<tbody>
-					<!--ここに<tr>でTodoの要素を１行づつ繰り返し表示する-->
-					<!--todosデータの各要素のプロパティが使用可能-->
-					<!--<tr>タグの中にID・コメント・状態変更ボタン・削除ボタンのカラムを追加-->
+					ここに<tr>でTodoの要素を１行づつ繰り返し表示する
+					todosデータの各要素のプロパティが使用可能
+					<tr>タグの中にID・コメント・状態変更ボタン・削除ボタンのカラムを追加
 					<tr v-for="item in computedTodos" v-bind:key="item.id">
 						<th>{{ item.id }}</th>
 						<td>{{ item.comment }}</td>
 						<td class="state">
-							<!--状態変更ボタンのモック-->
+							状態変更ボタンのモック
 							<button>{{ item.state }}</button>
 							</td>
 							<td class="button">
-								<!--削除ボタンのモック-->
+								削除ボタンのモック
 								<button v-on:click="doChangeState(item)">
 									{{ labels[item.state] }}
             					</button>
@@ -47,24 +99,24 @@
 								削除
 							</button>
 							</td>
-						<!-- 要素の情報 -->
+						 要素の情報 
   					</tr>
 				</tbody>
 			</table>
 			<h2>新しい作業の追加</h2>
-			<!--v-onディレクティブにより、ボタンをクリックしたり、入力フォームでエンターキーのサブミットが行われると
-			ハンドリングを行い、doAddが呼び出される-->
+			v-onディレクティブにより、ボタンをクリックしたり、入力フォームでエンターキーのサブミットが行われると
+			ハンドリングを行い、doAddが呼び出される
 			<form class="add-form" v-on:submit.prevent="doAdd">
-  				<!-- コメント入力フォーム -->
+  				 コメント入力フォーム 
   			コメント <input type="text" ref="comment">
-  				<!-- 追加ボタンのモック -->
+  				 追加ボタンのモック 
   				<button type="submit">追加</button>
 			</form>
-			<!--絞り込みラジオボタン-->
-			<!--Todo テーブル-->
-			<!--新規登録フォーム-->	
+			絞り込みラジオボタン
+			Todo テーブル
+			新規登録フォーム	
 		</div>
 		<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
 		<script src="main.js"></script>
 	</body>
-</html>
+</html> -->

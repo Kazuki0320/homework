@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+</head>
+
+	<template>
+		<div class="container">
+		  <div class="row mt-3">
+			<input type="test" v-model="text" class="form-control-inline col-6" />
+			<div class="col-5">
+			  <button @click="show()" class="btn btn-primary">show</button> 
+			  <button @click="chanege()" class="btn btn-success">change</button>
+			</div>
+			<div class="alert alert-info mt-3">{{ text }}</div>
+		  </div>
+		</div>
+	  </template>
+	  <script>
+	  export default {
+		data: function () {
+		  return {
+			text: "",
+		  };
+		},
+		methods: {
+		  show: function () {
+			alert(this.text);
+		  },
+		  chanege: function () {
+			this.text = "test!!!";
+		  },
+		},
+	  };
+	  </script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+</html>

@@ -1,0 +1,59 @@
+<!--
+【条件付きレンダリング】
+<やリたい事>
+・クリックボタンを押すと、"Hello World"と出力される
+→クリックボタンにv-onティレクティブを使用
+→v-onディレクティブのインスタンスのメソッドから、reverseFlgを呼び出す
+→v-ifディレクティブを使用して、文字を出力するかどうかを判定
+→v-ifディレクティブのインスタンスのメソッドから、showFlgを呼び出す
+・赤の文字を青に変える
+→v-onディレクティブから、reverseFlgを呼び出し、そのタイミングで、styleを反転させる
+※現状、赤の文字しか出力ができない
+
+<処理について>
+・v-onディレクティブで、reverseFlgを呼び出し、showFlgを反転させている
+・その後、v-ifで判定を行い、falseからtrueに変わったことから文字が出力
+-->
+
+<!DOCTYPE <html>
+<html>
+<head>
+	<title>Hello World</title>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+</head>
+
+<body>
+	<style>
+		.red{
+			color:red;
+		}
+		.blue{
+			color:blue;
+		}
+	</style>
+	<div id="intro" style="text-align:center">
+		<button v-on:click="reverseFlg">Click me</button>
+		<h2 v-if="showFlg">
+			<p v-bind:class="{red:isRed,blue:isBlue}">{{ message }}</p>
+		</h2>
+	</div>
+
+	<script type="text/javascript">
+		var vue_det = new Vue({
+			el:'#intro',
+			data: {
+				message: "Hello World",
+				showFlg: false,
+				isRed: true,
+				isBlue: false,
+			},
+			methods: {
+				reverseFlg: function(){
+					this.showFlg = !this.showFlg
+					this.isBlue = !this.isRed
+				}
+			}
+		});
+	</script>
+</body>
+</html>

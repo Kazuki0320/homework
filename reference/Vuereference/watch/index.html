@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+
+<body>
+	<div id="example">
+		<p>
+		  Choose advice number(1~217):
+		  <input v-model="answer">
+		</p>
+		<p>new advice: {{ newAdvice }}</p>
+		<p>old advice: {{ oldAdvice }}</p>
+	  </div>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+<script>
+var vm = new Vue({
+	el: '#example',
+	data: {
+	  oldAdvice: '',
+	  newAdvice: '',
+	  answer: ''
+	},
+	watch: {    // answerの変更に応じて、APIアクセス
+	  answer: function () {
+		this.newAdvice = 'Loading...' // APIの結果が返るまで暫定的に表示
+		var vm = this
+		var number = this.answer
+		axios.get('https://api.adviceslip.com/advice/' + number)
+		  .then(function (response) {
+			vm.newAdvice = response.data.slip.advice + ' ('+ number + ')'
+		  })
+		  .catch(function (response) {
+			vm.newAdvice = 'Could not get the reponse from the API.'
+		  })
+	  },    // newAdviceの変更に応じて、APIアクセス
+	  newAdvice: function (newData, oldData) {      // newAdviceで表示されたもののうち、アドバイス以外のものを除外
+		if(oldData !== 'Loading...' && oldData !== 'Could not get the reponse from the API.'){
+		  this.oldAdvice = oldData
+		}
+	  }
+	},
+  })
+</script>
+</html>
