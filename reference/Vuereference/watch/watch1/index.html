@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<meta charset="UTF-8">
+
+<body>
+	<div id = "app">
+		<p>
+			{{ hello }}
+		</p>
+		<p>
+			<input type="text" v-model:value="hello">
+		</p>
+		<pre>{{ $data }}</pre><!--{{ $data }}はVue.jsの仕様-->
+	</div>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+
+	<script>
+		var app = new Vue ({
+			el:"#app",
+			data:{
+				hello:'Hello World!'
+			},
+			watch:{
+				hello(newValue, oldValue){
+					console.log('new:', newValue, 'old', oldValue)//console.logは引数をカンマでつなぐことで、複数のデータをコンソールに出力することができる。
+				}
+			}
+		})
+	</script>
+</body>
+</html>
+
+<!--
+【vue-modelディレクティブを利用して、vue.js側とブラウザ側の双方向バインディングのデータの作成を行う】
+<目的>
+watchで、dataのプロパティ名helloの値”Hello World!”に変更があった場合、console.logの処理を実行するプログラムを作成していく
+<内容>
+helloプロパティに変更があった場合、console.logを都度実行して、元のhelloプロパティにあったデータと新しく入力されたhelloのデータを表示する。
+vueのデータとブラウザ上のデータを連動させるには、v-modelディレクティブを使用する。
+-->

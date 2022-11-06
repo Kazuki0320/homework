@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang = "ja">
+<meta charset="UTF-8">
+<body>
+	<div id="array">ここに配列の内容が表示されます。</div>
+	<div id="array1">ここに配列の内容が表示されます。</div>
+	<div id="array2">ここに配列の内容が表示されます。</div>
+	<div id="array3">ここに配列の内容が表示されます。</div>
+	
+	<script type="text/javascript">
+		const fruits = ["apple", "banana", "orange", "grape"];
+
+		let container = document.getElementById("array");
+		//push(配列の最後に要素を追加)
+		fruits.push("lemon");
+		container.innerHTML = "配列全ての要素は[ " + fruits + " ]です。";
+		//["apple", "banana", "orange", "grape", "lemon"]
+
+		let container1 = document.getElementById("array1");
+		//pop(配列の最後の要素を切り取る)
+		fruits.pop();
+		container1.innerHTML = "配列全ての要素は[ " + fruits + " ]です。";
+		//["apple", "banana", "orange", "grape"]
+
+		let container2 = document.getElementById("array2");
+		// unshift(配列の最初に要素を追加)
+		fruits.unshift("cherry");
+		container2.innerHTML = "配列全ての要素は[ " + fruits + " ]です。";
+		//["cherry", "apple", "banana", "orange", "grape"]
+
+		let container3 = document.getElementById("array3");
+		// //shift(配列の最初の要素を切り取る)
+		fruits.shift();
+		container3.innerHTML = "配列全ての要素は[ " + fruits + " ]です。";
+		//["apple", "banana", "orange", "grape"]
+
+	</script>
+</body>
+</html>
