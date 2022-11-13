@@ -3,7 +3,7 @@
 <meta charset="UTF-8">
 	<body>
 	<!-- ボタン -->
-	<button id="btn" onclick="activateTemplate">実行する</button>
+	<button id="btn" onclick="activateTemplate()">実行する</button>
 
 	<!-- template -->
 	<template id="template">
@@ -28,7 +28,7 @@
 		document.body.appendChild(clone);
 		};
 		// ボタンがクリックされたときに実行
-		document.getElementById('btn').addEventListener('click', activateTemplate);
+		// document.getElementById('btn').addEventListener('click', activateTemplate);
 	</script>
 </html>
 

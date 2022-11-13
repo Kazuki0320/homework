@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja">
+<body>
+	<div id="container">
+		<div id="container1">
+			<div id="container2">
+				</div>
+
+	<script>
+		/*【①基本構文】
+		・arrayで、配列要素を宣言し、forEachメソッドで、配列をループする処理を書く
+		・「array.forEach」で、arrayの要素を呼び出し、elementに各要素を格納して、それをgetElementByIdで取得してきたcontainerの要素に追加している。
+		*/
+		const array = ['a', 'b', 'c'];
+
+		array.forEach(element => 
+			console.log(element));
+		
+		// document.getElementById('container').innerHTML = array;
+
+		/*【②コールバック関数の各引数】
+		・valueには各要素が格納されており、indexでは各要素の配列番号を取得している。
+		*/
+		let array1 = new Array("要素１", "要素２", "要素３");
+
+		let getArray = ""
+		array1.forEach((value, index) => {
+			console.log("value:" + value + "index:" + index);
+			getArray +=  '<li>' + 'value:' + value + 'index:' + [index]+ '</li>';
+			// document.getElementById('container1').innerHTML = getArray;
+		});
+
+		/*【③arrayの使い方】
+		・arrayに格納されているのは、forEachメソッドの呼び出し元の配列であるため、
+		arrayの要素を変更すると、元の要素も変更される。
+		*/
+		let beforeArray = new Array("要素１", "要素２", "要素３");
+
+		let getValue = ""
+		beforeArray.forEach((value, index, array) => {
+			array[index] = value + "を変更";
+		});
+
+		beforeArray.forEach((value) => {
+			console.log(value);
+			getValue += '<li>' + value + '</li>';
+			document.getElementById('container2').innerHTML = getValue;
+		});
+	</script>
+</body>
+</html>
+

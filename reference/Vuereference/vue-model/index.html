@@ -1,39 +1,44 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<meta charset="UTF-8">
-</head>
 
-<div id="app">
-</div>
-	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
-	<template>
+	<head>
+		<meta charset="UTF-8">
+		<title>Vue-model</title>
+	</head>
+
+	<div id="app">
 		<div class="container">
-		  <div class="row mt-3">
-			<input type="test" v-model="text" class="form-control-inline col-6" />
-			<div class="col-5">
-			  <button @click="show()" class="btn btn-primary">show</button> 
-			  <button @click="chanege()" class="btn btn-success">change</button>
+			<div class="row mt-3">
+				<input type="test" v-model="text" class="form-control-inline col-6" />
+				<div class="col-5">
+					<button @click="show()" class="btn btn-primary">show</button>
+					<button @click="change()" class="btn btn-success">change</button>
+				</div>
+				<div class="alert alert-info mt-3">{{ text }}</div>
 			</div>
-			<div class="alert alert-info mt-3">{{ text }}</div>
-		  </div>
 		</div>
-	  </template>
-	  <script>
-	  export default {
-		data: function () {
-		  return {
-			text: "",
-		  };
-		},
-		methods: {
-		  show: function () {
-			alert(this.text);
-		  },
-		  chanege: function () {
-			this.text = "test!!!";
-		  },
-		},
-	  };
-	  </script>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+
+	<script>
+		var app = new Vue ({
+			el: '#app',
+			data: function () {
+				return {
+					text: "",
+				}
+			},
+
+			methods: {
+				show: function () {
+					alert(this.text);
+				},
+				change: function () {
+					this.text = "test!!!";
+				}
+			},
+		})	
+			
+	</script>
 </html>

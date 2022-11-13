@@ -14,6 +14,7 @@
 </body>
 
 <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
 <script>
 var vm = new Vue({
 	el: '#example',
@@ -32,11 +33,11 @@ var vm = new Vue({
 			vm.newAdvice = response.data.slip.advice + ' ('+ number + ')'
 		  })
 		  .catch(function (response) {
-			vm.newAdvice = 'Could not get the reponse from the API.'
+			vm.newAdvice = 'Could not get the response from the API.'
 		  })
 	  },    // newAdviceの変更に応じて、APIアクセス
 	  newAdvice: function (newData, oldData) {      // newAdviceで表示されたもののうち、アドバイス以外のものを除外
-		if(oldData !== 'Loading...' && oldData !== 'Could not get the reponse from the API.'){
+		if(oldData !== 'Loading...' && oldData !== 'Could not get the response from the API.'){
 		  this.oldAdvice = oldData
 		}
 	  }
