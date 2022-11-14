@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<script>
+	//【関数の引数で、スプレッド構文を利用する方法
+	function sum(x, y, z) {
+		return x + y + z;
+	}
+
+	let numbers = [1, 2, 3];
+	let result = sum(...numbers);
+	console.log(result);
+
+	//【配列で、スプレッド構文を使用する方法】
+	//<既存の配列に、スプレッド構文を使用して、文字を追加>
+	const fruits = ['apple', 'orange'];
+	const newFruits = ['melon', ...fruits, 'banana'];
+	console.log(newFruits);
+
+	//<配列の複製を行いそこに文字を追加>
+	const newFruits1 = [...fruits];
+	newFruits1.push('lemon');
+	console.log(newFruits1);
+
+	//【配列の結合を行う方法】
+	let array = ['山田', '田中'];
+	const name = ['鈴木', '小林'];
+	array1 = [...array, ...name];
+	console.log(array1);
+
+	//【オブジェクトでスプレッド構文を使用する方法】
+	//オブジェクトも、配列同様にスプレッド構文の使用が可能であるが、プロパティ名が被っている場合は後から宣言してるスプレッド構文で上書きされる。
+	//obj2はcharacterとnoCharacterのプロパティ名が被っていないため、オブジェクトが結合される。
+	const character = { name:'のび太', age:12 };
+	const character1 = { name:'ドラえもん', age:20};
+	const noCharacter = { tool: 'どこでもドア' }
+
+	const obj = { ...character };
+	console.log(obj);
+	const obj1 = { ...character, ...character1 };
+	console.log(obj1);
+	const obj2 = { ...character1, ...noCharacter };
+	console.log(obj2);
+	
+</script>
+</html>

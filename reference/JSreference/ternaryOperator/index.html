@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ja">
+<body>
+	<div id="container"></div>
+	<div id="container1"></div>
+</body>
+
+<script>
+	let point;
+
+	point = 85;
+	let msg = 'A君は' + ((point > 60)?'合格':'不合格');
+	console.log(msg);
+	document.getElementById('container').innerHTML = msg;
+
+	point = 55;
+	let msg1 = 'B君は' + ((point > 60)?'合格':'不合格');
+	console.log(msg1);
+	document.getElementById('container1').innerHTML = msg1;
+
+</script>
+</html>
