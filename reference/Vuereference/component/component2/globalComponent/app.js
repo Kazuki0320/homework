@@ -46,6 +46,43 @@ Vue.component('hello-vue1', {
 	}
 })
 
+/*
+<コンポーネントの中で、methodsオブジェクトを使用する>
+methodオブジェクトに関しては、returnは不要
+
+Vue.component('コンポーネント名', {
+	template:'',
+	data(){
+		return {
+			プロパティ名: 値1,
+			プロパティ名: 値2
+		}
+	},
+	methods:{
+		メソッド名() {
+			処理
+		}
+	}
+})
+*/
+
+//methodを使った実例として、要素をクリックするとdataにセットした2つのプロパティを繋げて、画面上に表示する処理を書いていく。
+Vue.component('methods-vue', {
+	template:'<p @click="sayHi"><button>挨拶: {{ output }}</button></p>',
+	data() {
+		return {
+			name:"AAA",
+			hello:"こんにちは",
+			output:""
+		}
+	},
+	methods:{
+		sayHi(){
+			this.output = this.name + this.hello
+		}
+	}
+})
+
 let app = new Vue({
 	el:'#app'
 })
