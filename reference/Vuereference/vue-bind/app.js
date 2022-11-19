@@ -1,10 +1,10 @@
 import { ref } from 'vue'
-			  export default ({
+			export default ({
 				setup() {
-				  const imageWidth = ref(100)
-			  
-				  return {
+				const imageWidth = ref(100)
+			
+				return {
 					imageWidth
-				  }
 				}
-			  })
+				}
+			})
