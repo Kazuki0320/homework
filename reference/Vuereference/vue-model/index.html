@@ -6,6 +6,13 @@
 		<title>Vue-model</title>
 	</head>
 
+	<!--【v-modelについて】
+	・v-modelは変数とタグの値を同期する機能があり、"text"というdataの中のプロパティとテキストボックスに入力した値が同期する。
+	テキストボックスの中身を更新すると、変数に反映され、変数を変えた場合は画面にもすぐに反映される。
+	→このように画面(view)と変数(data)が自動的に同期されることを双方向データバインディングという。
+	・また、v-modelはchangeイベント機能も持っている。
+	changeイベントについては、JSreferenceにて説明
+	-->
 	<div id="app">
 		<div class="container">
 			<div class="row mt-3">
