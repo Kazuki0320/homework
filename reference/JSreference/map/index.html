@@ -29,7 +29,7 @@
 	res = arr.map((elem, index) => elem * index)
 	console.log(res);
 
-	//<「元の配列」を使って、要素の値が、配列の要素数より大きい場合のみ、２倍する処理>
+	//<「元の配列」を使って、要素の値が、配列の要素数の数（ここでは５）より大きい場合のみ、２倍する処理>
 	numbers = [0, 5, 10, 20, 30];
 	result = numbers.map((elem, index, number) => {
 		if( number.length < elem ) {return elem * 2}
