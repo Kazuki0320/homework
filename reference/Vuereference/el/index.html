@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>LifeCycle Hooks</title>
+	</head>
+	<body>
+		<div id="app">
+			<h1>Hello World</h1>
+		</div>
+
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<script>
+			/*(this.$el)で、Vueインスタンスのelがどんな情報を持っているかコンソール上に表示
+			→コンソール上では、<div id="app">...</div>までのdivタグで設定したidの要素が表示される。
+			また、buttonタグでshowElの関数を設定することで、ボタンをクリックする度にshowEl関数が呼び出される。
+			この事から、動作確認でelはnew Vueインスタンスで指定した要素そのものであることがわかる。
+			・this.$elはDOMの要素なのでDOMが作成されていないとthis.$elは存在しない。
+			*/
+			new Vue({
+				el:"#app",
+				data:{},
+				created: function(){
+					console.log("created");//undefined
+					console.log(this.$el);
+				},
+				mounted: function(){
+					console.log("mounted");//<div id="app">...</div>
+					console.log(this.$el);
+				},
+			});
+
+			/*console.log(this)で、new Vueインスタンスの要素を指定してその中身を確認すると、dataオブジェクトの中身のmessageはcreatedにより置き換えられ、
+			リアクティブにデータが処理されている。
+			また、createdが呼ばれるということは、vueインスタンスの作成が完了してることがわかる。
+			*/
+			// new Vue ({
+			// 	el:"#app",
+			// 	data:{
+			// 		message:'Hello World'
+			// 	},
+			// 	created: function() {
+			// 		this.message = 'Hello Vue'
+			// 		console.log('created');
+			// 		console.log(this);
+			// 	},
+			// });
+		</script>
+	</body>
+</html>
