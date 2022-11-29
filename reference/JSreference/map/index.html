@@ -2,7 +2,7 @@
 <html lang="ja">
 <script>
 	//【mapメソッド】
-	//配列の各要素を１つずつ取り出して、各要素に対して処理を行ったのち、新しい配列を作成するメソッド
+	//mapメソッドは配列データに使うメソッドであり、配列の各要素を１つずつ取り出して、各要素に対して処理を行ったのち、新しい配列を作成するメソッド
 	//<mapメソッドにおいて、元の変数に代入しない場合>
 	arr = [1, 2, 3];
 	arr.map(elem => elem * 2)
@@ -37,5 +37,20 @@
 	})
 
 	console.log(result);
+
+	/*<「forEach」と「map」の違いについて>
+	・forEachは処理を実行するのみで、返り値を返さないが、mapは処理を実行し終えた後、新しい配列データとして返り値を返すことができる。
+	*/
+	//[forEach]
+	let result1 = [1,2,3].forEach(function(value) {
+		return value * 2;
+	})
+	console.log(result1);
+
+	//[map]
+	let result2 = [1,2,3].map(function(value) {
+		return value * 2;
+	})
+	console.log(result2);
 </script>
 </html>
