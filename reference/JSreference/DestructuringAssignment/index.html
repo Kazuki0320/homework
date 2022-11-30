@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<body>
+		<div id="app"></div>
+	</body>
+	<script>
+		/*【分割代入】
+		・「配列の要素」や「オブジェクトのプロパティ」を分解して、変数や定数の値に代入する方法
+		・配列の場合、右辺と左辺の同じインデックス番号が対応して値が代入される。
+		*/
+		const [m, n] = [1, 2];
+		console.log(`m=${m}, n=${n}`);//m=1,n=2
+
+		//下記は上記内容と同じ
+		const a = [1, 2];
+		const [m1, n1] = a;
+		console.log(`m1=${m1}, n1=${n1}`);//m=1,n=2
+
+	</script>
+</html>
