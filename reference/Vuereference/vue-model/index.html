@@ -12,13 +12,24 @@
 	→このように画面(view)と変数(data)が自動的に同期されることを双方向データバインディングという。
 	・また、v-modelはchangeイベント機能も持っている。
 	changeイベントについては、JSreferenceにて説明
+	
+	【双方向データバインディングと単方向データバインディング】
+	・単方向データバインディングは、viewのデータをイベントハンドラを使用しないと変数に反映できないが、双方向データバインディングではviewのデータを変更すると
+	自動的に変数データにも反映される。
+	・v-modelはv-bindとv-onを組み合わせたもの
 	-->
 	<div id="app">
 		<div class="container">
 			<div class="row mt-3">
+				<!--<input
+						v-bind:value="value"
+						v-on:input="value = $event.target.value"
+					>-->
+				<!--<input v-model="value">
+				・上記処理は二つとも同じ意味合いの処理となる。
+				-->
 				<input type="test" v-model="text" class="form-control-inline col-6" />
 				<div class="col-5">
-					<button @click="show()" class="btn btn-primary">show</button>
 					<button @click="change()" class="btn btn-success">change</button>
 				</div>
 				<div class="alert alert-info mt-3">{{ text }}</div>
@@ -36,11 +47,7 @@
 					text: "",
 				}
 			},
-
 			methods: {
-				show: function () {
-					alert(this.text);
-				},
 				change: function () {
 					this.text = "test!!!";
 				}
