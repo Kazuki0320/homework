@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<body>
+		<div id="app">
+			<slide>
+			<a id="home" href="#">
+				<span>Home</span>
+			</a>
+			<a id="about" href="#">
+				<span>About</span>
+			</a>
+			<a id="contact" href="#">
+				<span>Contact</span>
+			</a>
+			</slide>
+			<div id="page-wrap"></div>
+		</div>
+		<script>
+			import { Slide } from 'vue-burger-menu'
+
+			//vue-burger-menu一旦保留
+			Vue.component('slide', Slide);
+				let app = new Vue({
+					el: '#app'
+			});
+		</script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/vue-burger-menu@2.0.3/dist/vue-burger-menu.umd.js"></script>
+
+	</body>
+</html>

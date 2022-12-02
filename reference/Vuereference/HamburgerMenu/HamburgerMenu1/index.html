@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<body>
+		<div id="app">
+			<slide>
+			<a id="home" href="#">
+				<span>Home</span>
+			</a>
+			<a id="about" href="#">
+				<span>About</span>
+			</a>
+			<a id="contact" href="#">
+				<span>Contact</span>
+			</a>
+			</slide>
+			<div id="page-wrap"></div>
+		</div>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.min.js"></script>
+		<script>
+			const {Slide} = window['vue-burger-menu'];
+
+			Vue.component('slide', Slide);
+				let app = new Vue({
+					el: '#app'
+			});
+		</script>
+	</body>
+</html>
