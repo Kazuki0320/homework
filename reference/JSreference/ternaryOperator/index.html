@@ -3,6 +3,7 @@
 <body>
 	<div id="container"></div>
 	<div id="container1"></div>
+	<div id="container2"></div>
 </body>
 
 <script>
@@ -18,6 +19,12 @@
 	let msg1 = 'B君は' + ((point > 60)?'合格':'不合格');
 	console.log(msg1);
 	document.getElementById('container1').innerHTML = msg1;
+
+	let age = 19;
+
+	let drink = '20歳以下は' + ((age >= 20) ? "Beer" : "Orange Juice");
+	console.log(drink);//Orange Juice
+	document.getElementById('container2').innerHTML = drink;
 
 </script>
 </html>
