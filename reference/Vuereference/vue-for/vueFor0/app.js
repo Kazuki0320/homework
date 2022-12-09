@@ -11,11 +11,10 @@ new Vue({
 			1, 2, 3, 4, 5, 6, 7, 8, 9, 10
 		]
 	},
-	template: `
-	<div>
-	  <ul>
-	  	<li v-for="num in numbers">{{ num }}</li>
-	  </ul>
-	</div>
-	`
+	template:
+	`<div>
+	<ul>
+		<li v-for="num in numbers">{{ num }}</li>
+	</ul>
+	</div>`
 })
