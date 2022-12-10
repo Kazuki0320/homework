@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ja">
 	<body>
-		<table id="Vueshop" class="table">
+		<table id="app" class="table">
 			<tr>
 			<th>都道府県</th>
 			<td>
@@ -16,8 +16,8 @@
 </html>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
 <script>
-	var SHOP =  new Vue({
-		el: '#Vueshop',
+	let SHOP =  new Vue({
+		el: '#app',
 		data: {
 				pref: 
 				[{"no":"1","name":"\u5317\u6d77\u9053"},
@@ -71,15 +71,15 @@
 		},
 		computed: {
 			getPref: {
-		get: function () {
-			var self = this;
-			return self.pref.filter(function (item) {
-				return item;
-			});
-		},
-		set: function (v) {
-			this.pref = v;
-		}
+				get: function () {
+					let self = this;
+					return self.pref.filter(function (item) {
+						return item;
+					});
+				},
+				set: function (v) {
+					this.pref = v;
+				}
 			}
 		}
 	});
