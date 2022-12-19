@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ja">
+<meta charset="UTF-8">
+<script>
+	/*[配列の中から１０以上の数字を見つけ出し、最初に見つけた数字を出力する処理]*/
+	array = [5, 12, 140, 20, 3]
+	const found = array.find(element => element > 10)
+	console.log(found);
+
+	/*[usersの配列の中のオブジェクトから、指定したIDを見つけてくる処理]*/
+	const users = [
+	{ id: '101', name: 'Alice' },
+	{ id: '102', name: 'Bob' },
+	{ id: '103', name: 'Charlie' },
+	];
+
+	const id = '102';
+	const targetUser = users.find((ele) => ele.id === id);
+	console.log(targetUser)
+	// => { id: '102', name: 'Bob' }
+</script>
+</html>
+</html>
