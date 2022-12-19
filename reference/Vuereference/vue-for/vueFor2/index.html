@@ -10,7 +10,11 @@
 				</ul>
 			</div> -->
 
-		<!--v-forで、配列のオブジェクトを使用する。-->
+		<!--[v-forで、配列のオブジェクトを使用する。]
+		・v-forのキーとしては、一意になるIDを設定。
+		それぞれuser変数にオブジェクトが取り出されて、プロパティにアクセスすることが可能。
+		user.nameで名前、user.ageで年齢、user.genderで性別をそれぞれ取り出して文字列にして表示する。
+		-->
 		<div id="app">
 			<ul>
 				<li v-for="user in users" :key="user.id">
