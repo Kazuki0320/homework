@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<body>
+		<!--dataプロパティで宣言しているfruits配列をv-forを使用して、ループさせて要素を表示している。-->
+			<!-- <div id="app">
+				<ul class="divide-y-2 divide-gray-100">
+					<li class="p-3 hover:bg-blue-100" v-for="(fruit, index) in fruits" :key="fruit">
+					{{ index }}:{{ fruit }}
+					</li>
+				</ul>
+			</div> -->
+
+		<!--v-forで、配列のオブジェクトを使用する。-->
+		<div id="app">
+			<ul>
+				<li v-for="user in users" :key="user.id">
+				{{ user.name}}さんは、{{ user.age }}歳で{{ user.gender }}です。
+				</li>
+			</ul>
+		</div>
+	</body>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+	<script>
+		// let app = new Vue({
+		// 	el:"#app",
+		// 	data: {
+		// 		fruits: ["みかん","りんご","メロン","いちご","ぶどう"],
+		// 	}
+		// })
+
+		let app = new Vue({
+			el:"#app",
+			data: {
+				users:[
+				{
+					id: 1,
+					name: '山田',
+					age: '22',
+					gender: '男',
+				},
+				{
+					id: 2,
+					name: '鈴木',
+					age: '23',
+					gender: '男',
+				},
+				{
+					id: 3,
+					name: '佐藤',
+					age: '21',
+					gender: '女',
+				},
+				]
+			}
+		})
+	</script>
+</html>
