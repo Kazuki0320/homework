@@ -16,5 +16,5 @@ console.log(numbers);//結果[1, 3, 5, 10]
 ・アロー関数を使うと、上記処理と同じ結果を返しつつ、コードの量を減らすことができる。
 */
 const numbers1 = [1, 5, 10, 3];
-numbers.sort((a, b) => a - b):
+numbers.sort((a, b) => a - b);
 console.log(numbers1);//結果[1, 3, 5, 10]
