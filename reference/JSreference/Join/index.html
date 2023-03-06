@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<script>
+	//【joinメソッド】
+	/*
+	・引数に指定した区切り文字でそれぞれの要素の値を連結した文字列を返します。
+	要素の値はいったん文字列に変換され、そのあとで連結されます。区切り文字を省略した場合はカンマ(,)が指定されたものとして扱われます。
+	*/
+	let fruits = ['Apple', 120, 'Grapes', 80];
+	console.log(fruits.join());//Apple,120,Grapes,80
+
+	console.log(fruits.join("+"));//Apple + 120 + Grapes + 80
+
+	console.log(fruits.join(''));//Apple120Grapes80
+
+	//[二次元配列のような値の場合]
+	/*
+	・最初に配列の要素が文字列になり、その後で連結していた（,）が（＋）に置き換わる。
+	*/
+	let fruit = [['Apple', 120], ['Grapes', 80]];
+
+	console.log(fruit.join(' + '));//Apple,120 + Grapes,80
+	</script>
+</html>

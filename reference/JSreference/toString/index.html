@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<script>
+	//【toStringメソッド】
+	/*
+	・オブジェクトを文字列に変換するJavaScriptの組み込みメソッドです。ほとんどのオブジェクトは、toString()メソッドを持っています。
+	このメソッドを呼び出すと、オブジェクトが人間が読める形式の文字列に変換されます。オブジェクトの詳細な内容や構造を出力する場合には、
+	JSON.stringify()などの他のメソッドが使用されます。
+	・配列に対して toString メソッドを使用すると、配列の各要素をカンマ(,)で連結した文字列が返される。
+	・NumberやBooleanオブジェクトにも、使用すると文字列に変換される。
+	*/
+	let fruits = ['Apple', 'Grapes', 'Orange'];
+	console.log(fruits.toString());//Apple,Grapes,Orange
+
+	const numberObj = new Number(10);
+	console.log(numberObj.toString()); // "10"
+
+	const booleanObj = new Boolean(true);
+	console.log(booleanObj.toString()); // "true"
+	</script>
+</html>
