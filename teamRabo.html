@@ -209,8 +209,44 @@ for (let i = 0; i <= num205; i++) {
 	const result2 = solution(intervals);
 	console.log("result2", result2);
 
+// 具体的には、上記のコードは intervals = [[1,2],[2,3],[3,4]] の場合、以下のように動作します。
+
+// 1.intervals をソートすることで、[[1,2],[2,3],[3,4]] が [[1,2],[2,3],[3,4]] となる。
+// 2.merged = [[1,2]] となる。
+// 3.[[2,3],[3,4]] を順番に走査する。まず、currentInterval = [2,3] とする。
+// 4.lastMerged = [1,2] であるため、currentInterval[0] <= lastMerged[1] の条件が成立する。(2 <= 2)つまり、同じ値となる。
+// 5.lastMerged[1] = Math.max(lastMerged[1], currentInterval[1]) により、lastMerged = [1,3] となる。(2, 3) ソートしてるため右側に
+// 配列の中で大きい値がくる。この場合、lastMerged[1]に入る値は3
+// 6.次に、currentInterval = [3,4] とする。
+// 7.lastMerged = [1,3] であるため、currentInterval[0] <= lastMerged[1] の条件が成立する。
+// 8.lastMerged[1] = Math.max(lastMerged[1], currentInterval[1]) により、lastMerged = [1,4] となる。
+// 最終的に、merged = [[1,4]] となり、この値が返される。
+
 //[テツさん回答/Typescript]
 //=================================
+/*
+[コード解説]
+1.このコードは、target内の配列の要素を範囲として、重なる範囲を持つ要素をマージすることで、範囲が重ならない要素を出力する処理を書いている。
+2.resultsにtargetの最初の配列を追加。sortにより、[1, 2]は1-2となり、0未満となるので、入れ替えは起きない。
+3.arrayにはtarget[0]を格納。この場合は、target[0]は[1,2]となる。
+4.for文で、targetの2番目以降の要素を繰り返し処理。
+-Math.min(...array)→arrayには[1,2]が格納されているので、スプレッド構文で1と２の要素を指定し、小さい数字を指定。この場合は１。
+-Math.max(...array)→上記と同じ処理をしてることから、maxは2となる。
+5.if文では、３つのパターンを仮定しており※今回はif文を満たしていない。
+- ①target[1][0](今回は３)がminより大きい(minは１) かつ target[1][0](今回は3)よりmax(maxは2)の方が大きい
+- ②target[1][1](今回は4)がminより大きい(minは１) かつ target[1][1](今回は4)よりmax(maxは2)の方が大きい
+- ③target[1][0](今回は3)がminより小さい(minは１) かつ target[1][1](今回は4)よりmax(maxは2)が小さい
+- 上記文いずれかを満たす場合、以下の処理を行う。
+	・array([1,2])にconcatでtarget[3,4]を連結させ、それを新しいarray([1,2,3,4])とする。
+	・そして、再度arrayのminを出す。今回は1となる。maxは4。
+	・arrayに新しく[1,4]となる、数字を代入。
+	・arrayをresultsのlengthの長さ（1）-1として、results[0]には[1,4]の値が入る。
+6.if文に当てはまらない場合
+- elseの場合は以下のような処理を行う。
+	・resultsの配列は二次元配列なのでtarget[1]([3,4])をpush→results[[1,2],[3,4]]
+	・target[1]([3,4])を新しいarrayとする。そして、またループの最初の処理に戻り、minとmax処理を行う。
+7.最後にresultsをsortして、最小値の昇順を行なっている。
+*/
 	// const target: number[][] = [
 		// [1, 2],
 		// [3, 4],
@@ -219,7 +255,7 @@ for (let i = 0; i <= num205; i++) {
 	// 2次元配列の要素がどの型であるかを定義することで、TypeScriptはコードの安全性を向上させることができます。
 	// let results: number[][] = [target[0].sort((a, b) => a - b)];
 	// let array: number[] = target[0];
-	// 
+
 	// for (let i = 1; i < target.length; i++) {
 		// const min = Math.min(...array);
 		// const max = Math.max(...array);
@@ -243,19 +279,6 @@ for (let i = 0; i <= num205; i++) {
 	// 
 	// console.warn(results);
 //=================================
-
-	// 具体的には、上記のコードは intervals = [[1,2],[2,3],[3,4]] の場合、以下のように動作します。
-
-	// 1.intervals をソートすることで、[[1,2],[2,3],[3,4]] が [[1,2],[2,3],[3,4]] となる。
-	// 2.merged = [[1,2]] となる。
-	// 3.[[2,3],[3,4]] を順番に走査する。まず、currentInterval = [2,3] とする。
-	// 4.lastMerged = [1,2] であるため、currentInterval[0] <= lastMerged[1] の条件が成立する。(2 <= 2)つまり、同じ値となる。
-	// 5.lastMerged[1] = Math.max(lastMerged[1], currentInterval[1]) により、lastMerged = [1,3] となる。(2, 3) ソートしてるため右側に
-	// 配列の中で大きい値がくる。この場合、lastMerged[1]に入る値は3
-	// 6.次に、currentInterval = [3,4] とする。
-	// 7.lastMerged = [1,3] であるため、currentInterval[0] <= lastMerged[1] の条件が成立する。
-	// 8.lastMerged[1] = Math.max(lastMerged[1], currentInterval[1]) により、lastMerged = [1,4] となる。
-	// 最終的に、merged = [[1,4]] となり、この値が返される。
 
 	//[グリーディ法]
 	function findMaxSubarray(arr) {
