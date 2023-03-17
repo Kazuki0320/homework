@@ -60,7 +60,10 @@ print("result:", solution([1,2,3,4,3], 6))
 ・このコードはintsに与えられた配列の2要素を足した数とtargetで与えられた数が一致する結果を求めるコード。
 1.resultとcountの変数を0として定義
 2.外側のループで ints の各要素を順番に取り出し、内側のループでその要素とそれ以降の要素のペアを順番に調べていきます。
-3.if文でcountとjの要素が等しい場合またjとiが同じ数字の場合はスキップ。
+3.if文でcountとjの要素が等しい場合（１行目を例外処理）またjとiが同じ数字の場合はスキップ。
+4.ints[i]とints[j]を足した数がtargetと同じであれば、resultをインクリメント
+5.それ以外であれば、countをインクリメント
+6.returnで、resultの値を返す
 */
 	const solution = (ints, target) => {
 	let result = 0;
@@ -70,7 +73,7 @@ print("result:", solution([1,2,3,4,3], 6))
 			for (let j = 0; j < ints.length; j++) {
 				console.log("j:", j);
 				console.log("i:", i);
-				if (j <= i) {
+				if (count === j || j <= i) {
 					continue;
 				} else if (ints[i] + ints[j] === target) {
 					result++;
