@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+<script>
+/*
+【Mapオブジェクト】
+・Mapオブジェクトは、キーと値のペアを保持するためのオブジェクトです。
+オブジェクトとは異なり、Mapオブジェクトでは、キーに文字列やシンボルだけでなく、オブジェクトや関数など、任意の型を使用することができます。
+また、Mapオブジェクトは、キーの順序を保持するため、要素の挿入順にアクセスできるという利点もあります。
+Mapオブジェクトは、他のデータ構造と比べて高速に要素の検索ができるため、特にキーと値のペアを扱う場合に便利なオブジェクトです。
+Mapオブジェクトの基本的な使い方は、以下のようになります。
+*/
+
+// Mapオブジェクトの作成
+const myMap = new Map();
+
+// 要素の追加
+myMap.set('key1', 'value1');
+myMap.set('key2', 'value2');
+myMap.set('key3', 'value3');
+
+// 要素の取得
+console.log(myMap.get('key1')); // "value1"
+console.log(myMap.get('key2')); // "value2"
+
+// 要素の削除
+myMap.delete('key3');
+
+// キーの存在確認
+console.log(myMap.has('key3')); // false
+
+// キーの一覧取得
+console.log(Array.from(myMap.keys())); // ["key1", "key2"]
+
+/*
+・Mapオブジェクトは、for...ofループやforEachメソッドを使用して、要素を反復処理することができます。
+*/
+// for...ofループを使用した要素の反復処理
+for (const [key, value] of myMap) {
+	console.log(`${key}: ${value}`);
+}
+
+// forEachメソッドを使用した要素の反復処理
+myMap.forEach((value, key) => {
+	console.log(`${key}: ${value}`);
+});
+
+</script>
+</html>

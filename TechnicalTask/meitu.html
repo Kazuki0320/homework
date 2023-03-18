@@ -65,29 +65,53 @@ print("result:", solution([1,2,3,4,3], 6))
 5.それ以外であれば、countをインクリメント
 6.returnで、resultの値を返す
 */
-	const solution = (ints, target) => {
-	let result = 0;
-	let count = 0;
+// 	const solution = (ints, target) => {
+// 	let result = 0;
+// 	let count = 0;
 
-		for (let i = 0; i < ints.length; i++) {
-			for (let j = 0; j < ints.length; j++) {
-				console.log("j:", j);
-				console.log("i:", i);
-				if (count === j || j <= i) {
-					continue;
-				} else if (ints[i] + ints[j] === target) {
-					result++;
-					console.log("result:", result);
-				}
-			}
+// 		for (let i = 0; i < ints.length; i++) {
+// 			for (let j = 0; j < ints.length; j++) {
+// 				console.log("j:", j);
+// 				console.log("i:", i);
+// 				if (count === j || j <= i) {
+// 					continue;
+// 				} else if (ints[i] + ints[j] === target) {
+// 					result++;
+// 					console.log("result:", result);
+// 				}
+// 			}
+// 			count++;
+// 			console.log("count:", count);
+// 		}
+// 		return result;
+// 	}
+
+// console.log(solution([1,2,3,4,3], 6));//2
+// console.log(solution([1,5,3,3,3], 6));//4
+// console.log(solution([1,1,1,1,1], 2));//10
+
+/*
+
+*/
+function solution(nums, target) {
+	const numMap = new Map();	// Mapオブジェクトを用意する
+
+	let count = 0;
+	for (let i = 0; i < nums.length; i++) {
+		const complement = target - nums[i];
+		if (numMap.has(complement)) {
 			count++;
-			console.log("count:", count);
 		}
-		return result;
+		numMap.set(nums[i], i);
 	}
 
+	return count;
+}
+
+// 使用例
 console.log(solution([1,2,3,4,3], 6));//2
 console.log(solution([1,5,3,3,3], 6));//4
 console.log(solution([1,1,1,1,1], 2));//10
+
 </script>
 </html>
