@@ -85,8 +85,8 @@ function addtodoEvent() {
     // フォームの値をリセット
     document.querySelector(".add-item").value = "";
     // インスタンス化
-    const totoList = new TodoList();
-    totoList.addItem(addItemTxt);
+    const todoList = new TodoList();
+    todoList.addItem(addItemTxt);
 }
 
 // クリックイベント
