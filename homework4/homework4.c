@@ -8,6 +8,5 @@ int main(void) {
 	int *p = &n;
 	printf("p = %p\n", p);
 	printf("*p = %d\n", *p);
-
 	return 0;
 }
