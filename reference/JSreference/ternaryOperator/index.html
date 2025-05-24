@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja">
+<body>
+	<div id="container"></div>
+	<div id="container1"></div>
+	<div id="container2"></div>
+</body>
+
+<script>
+	/*[三項演算子]*/
+	let point;
+
+	point = 85;
+	let msg = 'A君は' + ((point > 60)?'合格':'不合格');
+	console.log(msg);
+	document.getElementById('container').innerHTML = msg;
+
+	point = 55;
+	let msg1 = 'B君は' + ((point > 60)?'合格':'不合格');
+	console.log(msg1);
+	document.getElementById('container1').innerHTML = msg1;
+
+	let age = 19;
+
+	let drink = '20歳以下は' + ((age >= 20) ? "Beer" : "Orange Juice");
+	console.log(drink);//Orange Juice
+	document.getElementById('container2').innerHTML = drink;
+
+	/*[if.elseで置き換えた文]
+	・文が長くなる。
+	let age = 19;
+	let drink;
+
+	if (age >= 20) {
+		drink = "Beer";
+	} else {
+		drink = "Orange Juice";
+	}
+
+	console.log(drink); // "Orange Juice"
+	*/
+
+</script>
+</html>

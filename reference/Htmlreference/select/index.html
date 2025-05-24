@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<!--
+	・selectのoptionタグで、選択肢を定義している
+	・<option> 要素は、選択肢が選択されたときにサーバーに送信するデータの値を含む value 属性を持ちます。 
+	・value 属性が含まれない場合、既定で要素の中に含まれるテキストの値が使用されます。
+	・<select> 要素は、複数の選択肢を選択することができるかどうかを定めるmultiple、
+	同時にいくつの選択肢を表示することができるかを定めるsizeなど、制御のために利用することができる固有の属性がいくつかあります。 
+	・フォームの部品としてデータが送信される際には、 <SELECT>タグのname属性で付けたデータ名と、 選択された<OPTION>のvalue属性の値を一組にして、
+	<FORM>タグのaction属性で指定したサーバー上のファイルに、 <FORM>タグのmethod属性で指定した転送方法で送られます。
+	-->
+	<body>
+		<!--[ノーマル]-->
+		<form action="sample.cgi" method="post">
+		<label for="pet-select">動物を選択:</label>
+		<select>
+			<option value="">動物を選択してください</option>
+			<option value="dog">犬</option>
+			<option value="cat">猫</option>
+			<option value="hamster">ハムスター</option>
+		</select>
+		</form>
+
+		<!--[size="値":画面に一度に表示する行数を指定]-->
+		<form actinon="sample.com" method="post">
+		<label for="pet-select">動物を選択:</label>
+		<select size="5" name="pet"><!--←これを5に変換すると5行分表示される。-->
+			<option value="">動物を選択してください</option>
+			<option value="dog">犬</option>
+			<option value="cat">猫</option>
+			<option value="hamster">ハムスター</option>
+		</select>
+		</form>
+
+		<!--[multiple:複数行の選択を行う]-->
+		<form action="sample.com" method="post">
+		<label for="pet-select">動物を選択:</label>
+		<select multiple name="sample">
+			<option value="">動物を選択してください</option>
+			<option value="dog">犬</option>
+			<option value="cat">猫</option>
+			<option value="hamster">ハムスター</option>
+			<option value="hamster">ハムスター</option>
+			<option value="hamster">ハムスター</option>
+		</select>
+		</form>
+
+		<!--[disabled:メニューを無効化し、入力できない状態にする]-->
+		<form action="sample.com" method="post">
+		<label for="pet-select">動物を選択:</label>
+		<select disabled name="sample">
+			<option value="dog">犬</option>
+			<option value="cat">猫</option>
+			<option value="hamster">ハムスター</option>
+		</select>
+		</form>
+
+	</body>
+</html>
+

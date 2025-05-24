@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<body>
+		<div id="app">ここに配列の要素が表示されます。</div>
+		<div id="app1">ここに配列の要素が表示されます。</div>
+	</body>
+	<script>
+		/*【split】
+		・指定した区切り文字で文字列を分割し、要素としてそれぞれ格納した配列を戻り値として返す。
+		*/
+		const months = 'Jan..Feb..Mar..Apr..May..Jun';
+		let monthsAry = months.split('..');
+		console.log(monthsAry);
+
+		const container = document.getElementById("app");
+		container.innerHTML = monthsAry;
+
+		/*numberの定数の最後にスラッシュがあると、そこの部分は空文字列になる。
+		→'1' '2' '3' '4' '5' ''←こんな感じ
+		*/
+		const number = '1/2/3/4/5/';
+		let numberAry = number.split('/');
+		console.log(numberAry);
+
+		const container1 = document.getElementById("app1");
+		container1.innerHTML = numberAry;
+	</script>
+</html>

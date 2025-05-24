@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<script>
+/*【グリーディ法】
+・グリーディ法は、最適解を見つけるために問題を複数に切り分けて、評価値が高いor低い順に取り込んで解を求めるアルゴリズム。
+考え方としては、お菓子を買いに行き、値段が安いものから順に買っていけば、合計金額が最小となる。これがグリーディ法の考え方。
+下記は整数配列から最大の和を持つ部分配列を見つけるグリーディ法。
+*/
+function findMaxSubarray(arr) {
+let maxSum = arr[0];
+let currentSum = arr[0];
+
+for (let i = 1; i < arr.length; i++) {
+	currentSum = Math.max(arr[i], currentSum + arr[i]);
+	maxSum = Math.max(maxSum, currentSum);
+	console.log("arr[i]: ", i);
+	console.log("currentSum", currentSum);
+	console.log("maxSum", maxSum);
+}
+	return maxSum;
+}
+const findMax = [1, -2, 3, 4, -5, 8];
+console.log("findMaxSubarray", findMaxSubarray(findMax))
+
+
+</script>
+</html>

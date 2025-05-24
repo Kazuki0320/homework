@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<meta charset="UTF-8">
+</html>
+<script>
+/*
+[配列から文字列への変更] 
+・JavaScript で toString() メソッドを使用して配列を文字列に変換する
+・JavaScript の .join() メソッドを使用して配列の要素を結合する
+・JavaScript で JSON.stringify() を使用して配列を文字列に変換する
+*/
+
+/*
+[replaceメソッド]
+・表示される文字列はカンマで区切られるため、それを削除するためにreplaceメソッドを使用する。
+→replaceメソッドはパラメータを２つ受け取り、最初は置き換えたい文字列を2つ目に空白を選択。
+→この場合、/g で表される文字列からすべてのコンマを削除する。
+*/
+let arr = ["apple", "lemon", "banana"].toString()
+console.log(arr.replace(/,/g," "))
+
+/*
+[joinメソッド]
+・配列を文字列に変換する別の方法は、join() メソッドを使用すること。
+このメソッドは、配列から各要素を取得し、一緒に文字列を形成する。ここで、toString() と同様の配列でこのメソッドを直接使用すると、コンマで区切られた文字列も生成される。
+ただし、ここでは、文字列内の要素を区切るパラメータとして他の区切り文字を直接渡すことができるため、replace() のような他のメソッドを使用する必要はない。
+*/
+let arr1 = ["apple", "lemon", "banana"].join()
+let arr2 =  ["apple", "lemon", "banana"].join("-")
+let arr3 =  ["apple", "lemon", "banana"].join("###")
+
+console.log(arr1);
+console.log(arr2);
+console.log(arr3);
+
+/*
+[JSON.stringify]
+・JSON.stringify() メソッドを使用すると、JavaScript オブジェクトまたは値を文字列に変換できる。
+このメソッドは、次のように最大 3つのパラメーターを取ることができる。
+JSON.stringify(value, replacer, space)
+value パラメータは、文字列に変換する必要のある任意の値を取る。このパラメーターを渡すには必須です。
+replacer は、文字列内のいくつかの要素を置き換えるために渡すことができる関数。
+読みやすくするために出力文字列に空白を追加する場合は、space パラメーターを使用できる。これらのパラメータ、replacer と space はどちらもオプション。
+*/
+
+let arr4 =  JSON.stringify(["apple", "lemon", "banana"]);
+console.log(arr4);
+
+</script>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ja">
+<script>
+//fetch() は Promise を返す（返り値を変数に代入する場合）
+const promise = fetch('https://jsonplaceholder.typicode.com/users');
+
+//fetch() のレスポンス（リクエストの結果）を then() メソッドで処理
+//今回はpromiseを使用しているが、他にもtext,arrayBuffer,blobの形式も使用可能
+
+promise.then((response) => {
+	return response.json();
+})
+.then((data) => {
+	console.log(data);
+})
+.catch(error => {
+	console.log("失敗しました");
+});
+
+</script>
+</html>

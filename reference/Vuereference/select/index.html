@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<body>
+		<div id="app"><!--①HTMLのテンプレートの中にselect要素を配置-->
+			<select v-model="selected"><!--③ ②でバインドするデータを定義したら、select要素の中にv-modelディレクティブで、データをバインドする。-->
+				<option>item1</option>
+				<option>item2</option>
+				<option>item3</option>
+			</select>
+			<div>選択項目:{{selected}}</div><!--ここではセレクトボックスにバインドした値（dataオプションに定義したselectedプロパティ）を可視化するために、
+				{{}}（マスタッシュ構文）を使用してdiv要素に値を表示しています。
+				これで画面からセレクトボックスが操作されて選択項目が変更されると、バインドした値が変更されるのが確認できます。-->
+		</div>
+	</body>
+	
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+	<script>
+		//②Vueインスタンスにセレクトボックスにバインドするデータを定義。
+		let select = new Vue({
+			el: '#app',
+			data: function(){
+				return {
+					selected:''
+				}
+			}
+		})
+	</script>
+</html>

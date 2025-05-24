@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<script>
+		//【Setオブジェクト】
+		/*
+		・データをリスト形式で保持できる機能を持つオブジェクト。配列と似ているが、異なる特徴が２つある。
+		1つ目:重複する値を保持できない。
+		2つめ:添字の概念が存在しない。
+		*/
+		//setオブジェクトを使って配列の重複を削除する
+		const pref = ["東京都", "神奈川", "東京都"];
+		let pref_list = new Set(pref);
+
+		let unique_pref_array = Array.from(pref_list);
+		console.log(unique_pref_array);//{東京都, 神奈川}
+	</script>
+</html>

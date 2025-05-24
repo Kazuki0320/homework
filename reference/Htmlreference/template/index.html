@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+<meta charset="UTF-8">
+	<body>
+	<!-- ボタン -->
+	<button id="btn" onclick="activateTemplate()">実行する</button>
+
+	<!-- template -->
+	<template id="template">
+		<div>挿入完了🎉</div>
+		<script>alert('挿入されました!')</script>
+	</template>
+	</body>
+
+	<script>
+		// templateコンテンツを挿入する関数
+		const activateTemplate = () => {
+		// ①コンテンツを取得
+		//getElementById()やquerySelector()でtemplate要素を取得します。コンテンツはtemplate要素.contentで取得できます。
+		const template = document.getElementById('template');
+		const content = template.content;
+		// ②複製する
+		//document.importNode(content, true)でコンテンツを複製します。第2引数はtrueにしましょう（子ノードまで複製されます）。
+		const clone = document.importNode(content, true);
+		// ③とくに変更しない
+		// ④挿入する
+		//好きな位置に挿入すればOKです。今回はdocument.body.appendChildでbodyタグ内に挿入します。
+		document.body.appendChild(clone);
+		};
+		// ボタンがクリックされたときに実行
+		// document.getElementById('btn').addEventListener('click', activateTemplate);
+	</script>
+</html>
+
+<!--【挙動】
+ボタンがクリックされたときに、「挿入されたました」のアラートが表示され、その後templateタグで保持していた文字がブラウザ上に表示される。
+templateタグのみだと、ブラウザ上には表示されず、JSで後から挿入するhtmlを保持することができる。
+JavaScriptで、templateコンテンツの取得 → 複製 → 挿入の処理を書。-->

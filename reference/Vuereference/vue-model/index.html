@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Vue-model</title>
+	</head>
+
+	<!--【v-modelについて】
+	・v-modelは変数とタグの値を同期する機能があり、"text"というdataの中のプロパティとテキストボックスに入力した値が同期する。
+	テキストボックスの中身を更新すると、変数に反映され、変数を変えた場合は画面にもすぐに反映される。
+	→このように画面(view)と変数(data)が自動的に同期されることを双方向データバインディングという。
+	・また、v-modelはchangeイベント機能も持っている。
+	changeイベントについては、JSreferenceにて説明
+	
+	【双方向データバインディングと単方向データバインディング】
+	・単方向データバインディングは、viewのデータをイベントハンドラを使用しないと変数に反映できないが、双方向データバインディングではviewのデータを変更すると
+	自動的に変数データにも反映される。
+	・v-modelはv-bindとv-onを組み合わせたもの
+	-->
+	<div id="app">
+		<div class="container">
+			<div class="row mt-3">
+				<!--<input
+						v-bind:value="value"
+						v-on:input="value = $event.target.value"
+					>-->
+				<!--<input v-model="value">
+				・上記処理は二つとも同じ意味合いの処理となる。
+				-->
+				<input type="test" v-model="text" class="form-control-inline col-6" />
+				<div class="col-5">
+					<button @click="change()" class="btn btn-success">change</button>
+				</div>
+				<div class="alert alert-info mt-3">{{ text }}</div>
+
+				<!--[テキスト・複数テキスト使用例]-->
+				<input type="message" v-model="message" placeholder="edit me">
+				<p>Message is: {{ message }}</p>
+
+				<span>Multiline message is:</span>
+				<p style="white-space: pre-line;">{{ message1}}</p>
+				<br>
+				<textarea type="message1" v-model="message1" placeholder="add multiple lines"></textarea>
+				<br>
+
+				<!--[チェックボックス]-->
+				<input type="checkbox" id="checkbox" v-model="checked">
+				<label for="checkbox">{{ checked }}</label>
+				<br>
+
+				<!--[複数チェックボックス]-->
+				<input type="checkbox" id="jack" value="Jack" v-model="checkedNames">
+				<label for="jack">Jack</label>
+				<input type="checkbox" id="john" value="John" v-model="checkedNames">
+				<label for="john">John</label>
+				<input type="checkbox" id="mike" value="Mike" v-model="checkedNames">
+				<label for="mike">Mike</label>
+				<br>
+				<span>Checked names: {{ checkedNames }}</span>
+				<br>
+
+				<!--[ラジオボタン]-->
+				<input type="radio" id="one" value="One" v-model="picked">
+				<label for="one">One</label>
+				<br>
+				<input type="radio" id="two" value="Two" v-model="picked">
+				<label for="two">Two</label>
+				<br>
+				<span>Picked: {{ picked }}</span>
+				<br>
+
+				<!--[単体の選択]-->
+				<select v-model="selected">
+					<option disabled value="">Please select one</option>
+					<option>A</option>
+					<option>B</option>
+					<option>C</option>
+				</select>
+				<br>
+				<span>Selected: {{ selected }}</span>
+				<br>
+
+				<!--[複数の選択]-->
+				<select v-model="selected1" multiple>
+					<option>A</option>
+					<option>B</option>
+					<option>C</option>
+				</select>
+				<br>
+				<span>Selected: {{ selected1 }}</span>
+
+			</div>
+		</div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+
+	<script>
+		var app = new Vue ({
+			el: '#app',
+			data: function () {
+				return {
+					text: "",
+					message: "",
+					message1: "",
+					checked: "",
+					checkedNames: [],
+					picked: "",
+					selected: "",
+					selected1: []
+				}
+			},
+			methods: {
+				change: function () {
+					this.text = "test!!!";
+				}
+			},
+		})	
+			
+	</script>
+</html>

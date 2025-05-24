@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+<script>
+	//【mapメソッド】
+	//mapメソッドは配列データに使うメソッドであり、配列の各要素を１つずつ取り出して、各要素に対して処理を行ったのち、新しい配列を作成するメソッド
+	//<mapメソッドにおいて、元の変数に代入しない場合>
+	arr = [1, 2, 3];
+	arr.map(elem => elem * 2)
+
+	console.log(arr);
+
+	//<mapメソッドにおいて、元の変数に代入する場合>
+	arr = [1, 2, 3];
+	arr = arr.map(elem => elem * 2)
+	console.log(arr);
+
+	//<現在の要素を使う処理>
+	//第一引数である、「現在の要素の値」を使ってmapを行う場合
+	//array.reduce(引数1 => 処理)
+	/*アロー関数においては、引数が１つの場合、処理を省略することができる。
+	処理が１行で記述できるときはかっこやreturnを省略できる。
+	下記記述は↑上記文と同じ*/
+	// array.reduce((引数1) => {処理})
+	//functionを省略しない場合は、以下のようになる。
+	// array.reduce(function(引数1){return 処理})
+
+	//「現在の要素のインデックス番号」と各要素を掛け合わせる処理
+	arr = [1, 2, 3];
+	res = arr.map((elem, index) => elem * index)
+	console.log(res);
+
+	//<「元の配列」を使って、要素の値が、配列の要素数の数（ここでは５）より大きい場合のみ、２倍する処理>
+	numbers = [0, 5, 10, 20, 30];
+	result = numbers.map((elem, index, number) => {
+		if( number.length < elem ) {return elem * 2}
+		else{ return elem}
+	})
+
+	console.log(result);
+
+	/*<「forEach」と「map」の違いについて>
+	・forEachは処理を実行するのみで、返り値を返さないが、mapは処理を実行し終えた後、新しい配列データとして返り値を返すことができる。
+	*/
+	//[forEach]
+	let result1 = [1,2,3].forEach(function(value) {
+		return value * 2;
+	})
+	console.log(result1);
+
+	//[map]
+	let result2 = [1,2,3].map(function(value) {
+		return value * 2;
+	})
+	console.log(result2);
+</script>
+</html>

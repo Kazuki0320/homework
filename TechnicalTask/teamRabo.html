@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ja">
+<meta charset="UTF-8">
+<script>
+	//[問題]
+	// A と B をそれぞれ 1 以上 3 以下の整数として、A ÷ B の商と余りを求めます。
+
+	// 1÷1=1あまり0
+	// 1÷2=0あまり1
+	// 1÷3=0あまり1
+	// 2÷1=2あまり0
+	// 2÷2=1あまり0
+	// 2÷3=0あまり2
+	// 3÷1=3あまり0
+	// 3÷2=1あまり1
+	// 3÷3=1あまり0
+	// この 9 個の式の余りを全て足すと 5 になります。
+
+	// それでは、A と B をそれぞれ 1 以上 600 以下の整数としたときに、A ÷ B の余りを全て足した値を求めてください。
+
+//[解答]
+let sum = 0;
+
+for(let A = 1; A <= 600; A++) {
+	for(let B = 1; B <= 600; B++) {
+		const result = A % B;
+		sum += result;
+	}
+}
+// console.log("sum", sum)//48756199
+
+//[問題]
+// 以下の式の値を計算して、答えの小数部を切り捨てた整数値を答えてください。
+// 1×2÷3+4×5÷6+7×8÷9+⋯+10099×10100÷10101
+// ※式の中にある割り算は実数の割り算です。例えば
+// 1×2÷3+4×5÷6+7×8÷9 であれば式の値は
+// 0.66666 ⋯ + 3.33333 ⋯ + 6.22222 ⋯ = 10.22222 ⋯
+// となります。
+
+//[解答]
+let sum1 = 0;
+
+for(let i = 1; i <= 10101; i += 3) {
+	const first = i;
+	const second = i + 1;
+	const third = i + 2;
+	const result = (first * second) / third;
+	sum1 += result; 
+}
+
+// const result = Math.floor(sum1);
+// console.log(result);//16999988
+
+//[問題]
+// 次の条件の何れか 1 つ以上を満たす整数のことを「三的な数」と呼ぶことにします。
+// 
+// 3 の倍数である。
+// 十進法で表すと 3 桁である。
+// 十進法で表すと「3」が含まれる。
+// 例えば、9、31、42、100、135 は何れも「三的な数」ですが、14 は「三的な数」ではありません。
+// 1 から 10000 までの整数のうち「三的な数」だけを足し合わせたときの合計を求めてください。
+
+//[解答]
+let sum2 = 0;
+
+for(let i = 1; i <= 10000; i++) {
+	if(i % 3 === 0 || i.toString().includes("3") || i >= 100 && i < 1000) {
+		sum2 += i;
+	}
+}
+
+// console.log("sum2", sum2)//27566244
+
+//[問題]
+// 英字 5 文字からなる文字列について、以下のような条件を考えます。
+
+// 以下に挙げる文字しか含まない。
+// ABCDEFGJKMPQTVWXYZ
+// どこかに A を含むが 2 文字目ではない。
+// どこかに E を含むが 4 文字目ではない。
+// どこかに T を含むが 2 文字目ではない。
+// ※同じ文字を 2 回以上含んでもよい。特に、A, E, T を 2 回以上含んでもよい。
+
+// ※英単語として意味をもつ必要はない。
+
+// これらの全ての条件を満たす文字列の個数を答えてください。
+
+//[解答]
+const Alphabet = "ABCDEFGJKMPQTVWXYZ";
+let count = 0;
+
+for(let i = 0; i < Alphabet.length; i++ ) {
+	for(let j = 0; j < Alphabet.length; j++) {
+		for(let k = 0; k < Alphabet.length; k++) {
+			for(let l = 0; l < Alphabet.length; l++) {
+				for(let m = 0; m < Alphabet.length; m++) {
+					const str =  Alphabet[i] + Alphabet[j] + Alphabet[k] + Alphabet[l] + Alphabet[m];
+					//条件を満たすかチェックを行う
+					if(str.includes("A") && str[1] !== "A" && str.includes("E") && str[3] !== "E" && str.includes("T") && str[1] !== "T") {
+						count ++;
+					}
+				}
+			}
+		}
+	}
+}
+
+// console.log(count);//7778
+
+// 205円切手が30枚、82円切手が40枚、30円切手が50枚あります。
+// これらの切手の全部または一部（1枚以上）を使って額面の和として表せる金額は何通りあるか、求めてください。
+
+//[解答]
+const count1 = [30, 40, 50]
+const collection = new Set() // 重複しないようにするためSetを使用
+
+for (let i = 0; i <= count1[0]; i++) {
+	for (let j = 0; j <= count1[1]; j++) {
+		for (let k = 0; k <= count1[2]; k++) {
+			const result = 205 * i + 82 * j + 30 * k
+			collection.add(result)
+		}
+	}
+}
+// collection.delete(0) // 1以上使ってとの条件から0を削除
+// console.warn(collection.size) // 答え
+// console.warn(Array.from(collection)) // 値を一応出力
+
+// 205円切手の枚数
+const num205 = 30;
+
+// 82円切手の枚数
+const num82 = 40;
+
+// 30円切手の枚数
+const num30 = 50;
+
+const numbers = new Set();
+
+// 205円切手を使う枚数
+for (let i = 0; i <= num205; i++) {
+	// 82円切手を使う枚数
+	for (let j = 0; j <= num82; j++) {
+		// 30円切手を使う枚数
+		for (let k = 0; k <= num30; k++) {
+			// 額面の和を計算
+			let sum = i * 205 + j * 82 + k * 30;
+				numbers.add(sum);
+		}
+	}
+}
+
+// numbers.delete(0) // 1以上使ってとの条件から0を削除
+// console.log("numbers", numbers);//64820は不正解だった。→9606が答えっぽい
+
+//[XMile課題]
+// solution 関数には引数として int 型の配列 arr が与えられています。
+// arr に含まれるすべての要素を2倍した結果を int 型の配列で返すプログラムを作成してください。
+
+//[解答]
+// let arr = [1, 2, 3];
+// const result1 = solution(arr);
+// console.log("result1", result1);
+
+// function solution (arr) {
+// 	return arr.map(element => element * 2)
+// }
+
+// var solution = (arr) => {
+//     // TODO: Implement me!
+//     const doubled = arr.map(num => num * 2);
+//     return doubled;
+// }
+
+// exports.solution = solution;
+
+// solution 関数には int 型の二次元配列である intervals が引数として与えられています。
+// intervals の各要素は [start, end] のように、任意の間隔を示します。
+// intervals の中には重複する間隔が存在しており、間隔が重複しないように間隔同士を組み合わせる必要があります。
+
+// 具体的には重複する間隔とは以下の様な間隔を示します。
+
+// intervals = [[1,3], [2,4], [5,7]]
+// この時 intervals[0] である [1,3] と intervals[1] である [2,4] は重複している間隔です。
+// intervals[0] と intervals[1] を組み合わせることで、 [1,4] という間隔を作ることができ、結果として [[1,4], [5,7]] という重複のない間隔を作ることができます。
+
+// 任意の二次元配列 intervals が渡された時、間隔同士を組み合わせ重複のない間隔を solution 関数の戻り値として int 型の二次元配列で返すプログラムを作成してください。
+
+//[自分の回答]
+	function solution(intervals) {
+		intervals.sort((a, b) => a[0] - b[0]);
+		let merged = [intervals[0]];
+
+		for (let i = 1; i < intervals.length; i++) {
+			let currentInterval = intervals[i];
+			let lastMerged = merged[merged.length - 1];
+			console.log("i:", i);
+			console.log("lastMerged", lastMerged);
+			console.log("currentInterval[0]", currentInterval[0]);
+			if (currentInterval[0] <= lastMerged[1]) {
+				lastMerged[1] = Math.max(lastMerged[1], currentInterval[1]);
+			} else {
+				merged.push(currentInterval);
+			}
+		}
+		return merged;
+	}
+	const intervals = [[3, 6], [2, 4], [1, 10]];
+	const result2 = solution(intervals);
+	console.log("result2", result2);
+
+// 具体的には、上記のコードは intervals = [[1,2],[2,3],[3,4]] の場合、以下のように動作します。
+
+// 1.intervals をソートすることで、[[1,2],[2,3],[3,4]] が [[1,2],[2,3],[3,4]] となる。
+// 2.merged = [[1,2]] となる。
+// 3.[[2,3],[3,4]] を順番に走査する。まず、currentInterval = [2,3] とする。
+// 4.lastMerged = [1,2] であるため、currentInterval[0] <= lastMerged[1] の条件が成立する。(2 <= 2)つまり、同じ値となる。
+// 5.lastMerged[1] = Math.max(lastMerged[1], currentInterval[1]) により、lastMerged = [1,3] となる。(2, 3) ソートしてるため右側に
+// 配列の中で大きい値がくる。この場合、lastMerged[1]に入る値は3
+// 6.次に、currentInterval = [3,4] とする。
+// 7.lastMerged = [1,3] であるため、currentInterval[0] <= lastMerged[1] の条件が成立する。
+// 8.lastMerged[1] = Math.max(lastMerged[1], currentInterval[1]) により、lastMerged = [1,4] となる。
+// 最終的に、merged = [[1,4]] となり、この値が返される。
+
+//[テツさん回答/Typescript]
+//=================================
+/*
+[コード解説]
+1.このコードは、target内の配列の要素を範囲として、重なる範囲を持つ要素をマージすることで、範囲が重ならない要素を出力する処理を書いている。
+2.resultsにtargetの最初の配列を追加。sortにより、[1, 2]は1-2となり、0未満となるので、入れ替えは起きない。
+3.arrayにはtarget[0]を格納。この場合は、target[0]は[1,2]となる。
+4.for文で、targetの2番目以降の要素を繰り返し処理。
+-Math.min(...array)→arrayには[1,2]が格納されているので、スプレッド構文で1と２の要素を指定し、小さい数字を指定。この場合は１。
+-Math.max(...array)→上記と同じ処理をしてることから、maxは2となる。
+5.if文では、３つのパターンを仮定しており※今回はif文を満たしていない。
+- ①target[1][0](今回は３)がminより大きい(minは１) かつ target[1][0](今回は3)よりmax(maxは2)の方が大きい
+- ②target[1][1](今回は4)がminより大きい(minは１) かつ target[1][1](今回は4)よりmax(maxは2)の方が大きい
+- ③target[1][0](今回は3)がminより小さい(minは１) かつ target[1][1](今回は4)よりmax(maxは2)が小さい
+- 上記文いずれかを満たす場合、以下の処理を行う。
+	・array([1,2])にconcatでtarget[3,4]を連結させ、それを新しいarray([1,2,3,4])とする。
+	・そして、再度arrayのminを出す。今回は1となる。maxは4。
+	・arrayに新しく[1,4]となる、数字を代入。
+	・arrayをresultsのlengthの長さ（1）-1として、results[0]には[1,4]の値が入る。
+6.if文に当てはまらない場合
+- elseの場合は以下のような処理を行う。
+	・resultsの配列は二次元配列なのでtarget[1]([3,4])をpush→results[[1,2],[3,4]]
+	・target[1]([3,4])を新しいarrayとする。そして、またループの最初の処理に戻り、minとmax処理を行う。
+7.最後にresultsをsortして、最小値の昇順を行なっている。
+*/
+	// const target: number[][] = [
+		// [1, 2],
+		// [3, 4],
+		// [5, 6]
+	// ];
+	// 2次元配列の要素がどの型であるかを定義することで、TypeScriptはコードの安全性を向上させることができます。
+	// let results: number[][] = [target[0].sort((a, b) => a - b)];
+	// let array: number[] = target[0];
+
+	// for (let i = 1; i < target.length; i++) {
+		// const min = Math.min(...array);
+		// const max = Math.max(...array);
+	// 
+		// if (
+			// (target[i][0] >= min && target[i][0] <= max) ||
+			// (target[i][1] >= min && target[i][1] <= max) ||
+			// (target[i][0] <= min && target[i][1] >= max)
+		// ) {
+			// array = array.concat(target[i]);
+			// const min = Math.min(...array);
+			// const max = Math.max(...array);
+			// array = [min, max];
+			// results[results.length - 1] = array;
+		// } else {
+			// results.push(target[i]);
+			// array = target[i];
+		// }
+	// }
+	// results = results.sort((a, b) => a[0] - b[0]);
+	// 
+	// console.warn(results);
+//=================================
+
+//[XMile課題]
+/*
+solution 関数には int 型の配列 nums が引数として与えられています。
+任意のインデックス i に対して、以下の条件を満たす 部分配列 の数を solution 関数の戻り値として int 型の配列で返すプログラムを作成してください。
+
+nums[i] の値は部分配列内で最大の値をとる唯一の要素である
+部分配列の最初、または最後の要素は nums[i] である
+例えば以下のような例が与えられたとします。
+
+[3,4,1,6,2]
+インデックス i=1 の時、条件を満たす部分配列の一部として次のようなものが挙げられます。
+
+[3,4],[4],[4,1]
+なぜなら上記の例は全て nums[1] が最大値であり、 nums[1] が最初、または最後の要素だからです。
+返り値には、任意のインデックス i の時、条件を満たす部分配列の数を含む配列が期待されているため、上記の例の時返り値は以下のようになります。
+
+[1,3,1,5,1]
+*/
+
+/*
+[XMile課題]
+* CREATE table city_temperatures(country varchar(255), city varchar(255), temperature integer);
+*/
+// SELECT country, MAX(temperature) AS highest
+// FROM temperature
+// GROUP BY country
+
+// SELECT 
+//     country, MAX(temperature) AS highest, ROUND(AVG(temperature), 1) as average,
+// FROM temperature
+// GROUP BY country
+
+// SELECT country, temperature, city
+// FROM temperature
+// WHERE (country, temperature) IN (
+//   SELECT country, MAX(temperature)
+//   FROM temperature
+//   GROUP BY country
+// );
+
+</script>
+</html>

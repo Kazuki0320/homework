@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<body>
+		<div id="app">
+			<p>
+				computed
+			</p>
+			<ol>
+				<li>{{  computedNum }}</li>
+				<li>{{  computedNum }}</li>
+				<li>{{  computedNum }}</li>
+			</ol>
+			<p>
+				method
+			</p>
+			<ol>
+				<li>{{  methodNum() }}</li>
+				<li>{{  methodNum() }}</li>
+				<li>{{  methodNum() }}</li>
+			</ol>
+		</div>
+	</body>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+	<script>
+		/*【computedとmethodsについて】
+		1.呼び出し方法の違い
+		2.実行タイミングの違い
+		3.setterの設定の違い
+		
+		・computedはキャッシュ（保持）することができ、リアクティブなデータを使用する際は、computedを使用した方が必要以上に計算されないというメリットがある。
+		・methodsはキャッシュすることができず、リアクティブなデータ以外を使用するときに使用した方がいい。
+		*/
+		let app = new Vue({
+			el:"#app",
+			data: {
+				basePrice:100
+			},
+			computed: {
+				computedNum: function() {
+					console.log('computed');
+					return Math.random()
+				}
+			},
+			methods: {
+				methodNum: function(){
+					console.log('method')
+					return Math.random()
+				}
+			}
+		})
+	</script>
+</html>

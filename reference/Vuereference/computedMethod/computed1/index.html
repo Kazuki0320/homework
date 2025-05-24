@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<meta charset="UTF-8">
+	<!--[computedで、税込み価格の計算をする]
+	・computedを使用しないで、dataのpriceとtaxを使用して、計算するパターン
+	-->
+	<body>
+		<div id="app">
+			<div>税込価格:{{Math.round(price * tax)}}</div>
+			<!-- <div>税込価格:{{totalValue}}</div> -->
+		</div>
+	</body>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+<script>
+	let app = new Vue({
+		el:'#app',
+		data: {
+			price:100,
+			tax: 1.1
+		}
+	})
+</script>
+
+<!--[算出プロパティを使用したパターン]
+・同じ結果でも、computedを使用したパターンは関数内で処理を行なってくれるのでHTML内で関数を呼び出すだけで済む。
+・また、methodでも同じ書き方ができるが、違いはキャッシュできるかできないかにある。
+-->
+<!-- <script>
+	let app = new Vue({
+		el:"#app",
+		data: {
+			price: 100,
+			tax: 1.1
+		},
+		computed: {
+			totalValue: function() {
+				return Math.round(this.price * this.tax)
+			}
+		}
+	})
+</script> -->
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<body>
+		<div id="app"></div>
+	</body>
+	<script>
+		/*【分割代入】
+		・「配列の要素」や「オブジェクトのプロパティ」を分解して、変数や定数の値に代入する方法
+		・配列の場合、右辺と左辺の同じインデックス番号が対応して値が代入される。
+		*/
+		const [m, n] = [1, 2];
+		console.log(`m=${m}, n=${n}`);//m=1,n=2
+
+		//下記は上記内容と同じ
+		const a = [1, 2];
+		const [m1, n1] = a;
+		console.log(`m1=${m1}, n1=${n1}`);//m=1,n=2
+
+		//上記例は、要素数に対応して値を出力していたが、今回は指定した要素数を出力する処理
+		const b = [1, 2, 3, 4];
+		const [, j1, , j2] = b;
+		console.log(`j1=${j1}, j2=${j2}`);//j1=2,j2=4
+
+		//スプレッド構文を利用して、片方の値には2~4までの数字を指定することもできる
+		const c = [1, 2, 3, 4];
+		const [s, ...s1] = c;
+		console.log(`s=${s}, s1=${s1}`);//s=1, s1=2,3,4
+
+		//オブジェクトの分割代入
+		//オブジェクトの値（プロパティx,y)をもつojtがあり、２行目でプロパティx,yにオブジェクトの値を代入する。
+		const ojt = {x: 1, y:2};
+		const {x, y} = ojt;
+		console.log(`x=${x}, y=${y}`);
+
+		//孫プロパティを取得する場合、子オブジェクトのプロパティを取得する必要がある。
+		const myProfile = {
+			name:'kazuki',
+			age:26,
+			address: {
+				city: 'Tokyo',
+			}
+		}
+
+		const {address:{city}, name} = myProfile;
+		console.log(city);//Tokyo
+		console.log(name);//kazuki
+
+	</script>
+</html>

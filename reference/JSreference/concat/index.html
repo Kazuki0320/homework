@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<script>
+		/*【concatメソッド】
+		・concat()メソッドは、配列に別の配列または値を連結し、新しい配列を返すJavaScriptのメソッドです。
+		引数には、連結する配列や値を指定できます。元の配列は変更されず、新しい配列が返されます。例えば、以下のように使用します。
+		*/
+		const array = [1, 2, 3];
+		const array1 = [4, 5, 6,];
+		const array2 = array.concat(array1);
+		console.log(array2);// [1, 2, 3, 4, 5, 6]
+
+		//concat()メソッドは、配列を連結するだけでなく、要素を追加するためにも使用できます。
+		const array3 = [1, 2, 3];
+		const array4 = array3.concat(4, 5, 6);
+		console.log(array4); // [1, 2, 3, 4, 5, 6]
+
+		
+	</script>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ja">
+<script>
+	/*
+	・全探索
+	→配列の中から全探索で合計値が目標値と一致する要素の組み合わせを見つける例
+	*/
+	function exhaustiveSearch(arr, target) {
+	let count = 0;
+	let result = 0;
+		for(let i = 0; i < arr.length; i++) {
+			for(let j = 0; j < arr.length; j++) {
+				if (count === j || j <= i) {
+					continue;
+				} else if (arr[i] + arr[j] === target) {
+					result++;
+				}
+			}
+			count++;
+		}
+		return result;
+	}
+	console.log(exhaustiveSearch([1, 2, 3, 4, 3], 6)); // 2
+</script>
+</html>
