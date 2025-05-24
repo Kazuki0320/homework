@@ -139,7 +139,7 @@ class OrderProcessor
 
         $this->log("在庫確認 OK. 合計金額={$totalAmount}");
 
-        // 3. 決済処理（将来的に代引にも対応したい）
+        // 4. 決済処理（将来的に代引にも対応したい）
         $this->log("決済処理開始: 方法={$paymentType}, 金額={$totalAmount}");
         $success = false;
         if ($paymentType === 'CREDIT_CARD') {
