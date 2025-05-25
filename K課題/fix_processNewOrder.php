@@ -37,6 +37,9 @@ class OrderItem {
     }
 }
 
+// バリデーション例外クラス
+class OrderValidationException extends Exception {}
+
 // 1. 入力検証
 class OrderValidator {
     public function validateOrder(Customer $customer, array $items, string $paymentType): void
@@ -49,21 +52,21 @@ class OrderValidator {
     private function validateCustomer(Customer $customer): void
     {
         if (empty($customer->id) || empty($customer->email)) {
-            throw new Error('顧客情報が不足しています');
+            throw new OrderValidationException('顧客情報が不足しています');
         }
     }
 
     private function validateItems(array $items): void
     {
         if (empty($items)) {
-            throw new Error('注文商品が空です');
+            throw new OrderValidationException('注文商品が空です');
         }
     }
 
     private function validatePaymentType(string $paymentType): void
     {
         if (empty($paymentType)) {
-            throw new Error('注文方法が指定されていません');
+            throw new OrderValidationException('注文方法が指定されていません');
         }
     }
 }
@@ -193,18 +196,7 @@ class NotificationService {
     }
 }
 
-// ロガーインターフェース
-interface LoggerInterface {
-    public function log(string $message): void;
-}
 
-// 標準出力ロガー
-class ConsoleLogger implements LoggerInterface {
-    public function log(string $message): void {
-        $timestamp = (new DateTime())->format(DateTime::ATOM);
-        echo "[{$timestamp}] {$message}\n";
-    }
-}
 
 // 注文処理サービス
 class OrderService {
