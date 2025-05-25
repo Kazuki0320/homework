@@ -106,7 +106,28 @@ class BankTransferPaymentProcessor implements PaymentProcessor {
 
 // 支払い処理のファクトリー
 class PaymentProcessorFactory {
+    private static array $testProcessors = [];
+
+    /**
+     * テスト用のプロセッサを設定
+     */
+    public static function setTestProcessor(string $paymentType, PaymentProcessor $processor): void {
+        self::$testProcessors[$paymentType] = $processor;
+    }
+
+    /**
+     * テスト用のプロセッサをクリア
+     */
+    public static function clearTestProcessors(): void {
+        self::$testProcessors = [];
+    }
+
     public static function create(string $paymentType): PaymentProcessor {
+        // テスト用のプロセッサが設定されている場合はそれを返す
+        if (isset(self::$testProcessors[$paymentType])) {
+            return self::$testProcessors[$paymentType];
+        }
+
         return match($paymentType) {
             'CREDIT_CARD' => new CreditCardPaymentProcessor(),
             'BANK_TRANSFER' => new BankTransferPaymentProcessor(),
