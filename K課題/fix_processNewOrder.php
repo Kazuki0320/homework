@@ -136,145 +136,162 @@ class PaymentProcessorFactory {
     }
 }
 
-// --- 責務が混在しているクラス ---
-class OrderProcessor
-{
-    private array $productInventory = [];
-    private array $orderLog          = [];
-    private OrderValidator $validator;
+// 在庫管理サービス
+class InventoryService {
+    private array $productInventory;
 
-    public function __construct()
-    {
-        $this->validator = new OrderValidator();
-        // 初期在庫ダミーデータ
-        $this->productInventory = [
-            'ITEM001' => 50,
-            'ITEM002' => 30,
-            'ITEM003' => 0,   // 在庫切れ
-        ];
+    public function __construct(array $initialInventory = []) {
+        $this->productInventory = $initialInventory;
     }
 
-    public function inventoryCheck(array $items): bool
-    {
+    public function checkStock(array $items): bool {
         foreach ($items as $item) {
             if ($item->product === null || empty($item->product->id) || $item->quantity <= 0) {
-                $this->log("エラー: 不正な商品情報が含まれています。");
-                return false;
+                throw new InventoryException("不正な商品情報が含まれています");
             }
             $stock = $this->productInventory[$item->product->id] ?? 0;
             if ($stock < $item->quantity) {
-                $this->log("エラー: 在庫不足 - 商品ID={$item->product->id}, 要求={$item->quantity}, 在庫={$stock}");
-                return false;
+                throw new InventoryException("在庫不足 - 商品ID={$item->product->id}, 要求={$item->quantity}, 在庫={$stock}");
             }
         }
         return true;
     }
 
-    public function calculateTotalAmount(array $items): float
-    {
-        return array_reduce($items, function($total, $item) {
-            return $total + ($item->product->price * $item->quantity);
-        }, 0.0);
-    }
-
-    /**
-     * 決済処理を実行する
-     * 
-     * @param Customer $customer 顧客情報
-     * @param float $amount 決済金額
-     * @param string $paymentType 支払い方法
-     * @throws PaymentProcessingException 決済処理に失敗した場合
-     * @throws UnsupportedPaymentTypeException 未対応の支払い方法の場合
-     */
-    private function processPayment(Customer $customer, float $amount, string $paymentType): void {
-        $this->log("決済処理開始: 方法={$paymentType}, 金額={$amount}");
-        
-        try {
-            $processor = PaymentProcessorFactory::create($paymentType);
-            $success = $processor->process($customer, $amount);
-            
-            if (!$success) {
-                throw new PaymentProcessingException("決済処理に失敗しました");
-            }
-            
-            $this->log("決済処理成功");
-        } catch (UnsupportedPaymentTypeException $e) {
-            $this->log("エラー: " . $e->getMessage());
-            throw $e;
-        } catch (PaymentProcessingException $e) {
-            $this->log("エラー: " . $e->getMessage());
-            throw $e;
+    public function updateStock(array $items): void {
+        foreach ($items as $item) {
+            $this->productInventory[$item->product->id] -= $item->quantity;
         }
     }
+}
 
-    /**
-     * 注文を処理する（在庫確認・価格計算・決済・更新・通知・ロギング）
-     * @param Customer|null $customer
-     * @param OrderItem[]   $items
-     * @param string|null   $paymentType
-     * @return string 注文IDまたはエラーメッセージ
-     */
-    public function processNewOrder(Customer $customer, array $items, string $paymentType): string
-    {
-        $this->log("注文処理開始: 顧客ID=" . $customer->id);
+// 注文IDジェネレーターサービス
+class OrderIdGenerator {
+    public function generate(): string {
+        return 'ORD' . time();
+    }
+}
+
+// メール通知サービス
+class NotificationService {
+    private LoggerInterface $logger;
+
+    public function __construct(LoggerInterface $logger) {
+        $this->logger = $logger;
+    }
+
+    public function sendOrderConfirmation(
+        Customer $customer,
+        string $orderId,
+        float $totalAmount,
+        string $paymentType
+    ): void {
+        $subject = "ご注文ありがとうございます (注文ID: {$orderId})";
+        $body = "{$customer->name}様\n\nご注文ありがとうございます。\n合計金額: {$totalAmount}円\n支払い方法: {$paymentType}\n";
+        
+        // 実際のメール送信処理（実装は省略）
+        $this->logger->log("[Internal] メール送信 (To={$customer->email}, Subject={$subject})");
+    }
+}
+
+// ロガーインターフェース
+interface LoggerInterface {
+    public function log(string $message): void;
+}
+
+// 標準出力ロガー
+class ConsoleLogger implements LoggerInterface {
+    public function log(string $message): void {
+        $timestamp = (new DateTime())->format(DateTime::ATOM);
+        echo "[{$timestamp}] {$message}\n";
+    }
+}
+
+// 注文処理サービス
+class OrderService {
+    private OrderValidator $validator;
+    private InventoryService $inventoryService;
+    private PaymentProcessorFactory $paymentFactory;
+    private OrderIdGenerator $orderIdGenerator;
+    private NotificationService $notificationService;
+    private LoggerInterface $logger;
+
+    public function __construct(
+        OrderValidator $validator,
+        InventoryService $inventoryService,
+        PaymentProcessorFactory $paymentFactory,
+        OrderIdGenerator $orderIdGenerator,
+        NotificationService $notificationService,
+        LoggerInterface $logger
+    ) {
+        $this->validator = $validator;
+        $this->inventoryService = $inventoryService;
+        $this->paymentFactory = $paymentFactory;
+        $this->orderIdGenerator = $orderIdGenerator;
+        $this->notificationService = $notificationService;
+        $this->logger = $logger;
+    }
+
+    public function processNewOrder(Customer $customer, array $items, string $paymentType): string {
+        $this->logger->log("注文処理開始: 顧客ID=" . $customer->id);
 
         try {
             // 1. 入力検証
             $this->validator->validateOrder($customer, $items, $paymentType);
-            $this->log('入力検証OK');
+            $this->logger->log('入力検証OK');
 
             // 2. 在庫確認
-            if (!$this->inventoryCheck($items)) {
-                return 'ERROR: Insufficient stock.';
-            }
-
+            $this->inventoryService->checkStock($items);
+            
             // 3. 金額計算
             $totalAmount = $this->calculateTotalAmount($items);
-            $this->log("在庫確認 OK. 合計金額={$totalAmount}");
+            $this->logger->log("在庫確認 OK. 合計金額={$totalAmount}");
 
             // 4. 決済処理
-            try {
-                $this->processPayment($customer, $totalAmount, $paymentType);
-            } catch (PaymentException $e) {
-                return 'ERROR: ' . $e->getMessage();
+            $processor = $this->paymentFactory->create($paymentType);
+            if (!$processor->process($customer, $totalAmount)) {
+                throw new PaymentProcessingException("決済処理に失敗しました");
             }
 
             // 5. 在庫更新
-            foreach ($items as $item) {
-                $this->productInventory[$item->product->id] -= $item->quantity;
-            }
-            $this->log("在庫更新完了");
+            $this->inventoryService->updateStock($items);
+            $this->logger->log("在庫更新完了");
 
-            // 6. 注文ID生成 & ログ
-            $orderId = 'ORD' . time();
-            $this->log("注文確定: 注文ID={$orderId}");
+            // 6. 注文ID生成
+            $orderId = $this->orderIdGenerator->generate();
+            $this->logger->log("注文確定: 注文ID={$orderId}");
 
-            // 7. 通知メール
-            $subject = "ご注文ありがとうございます (注文ID: {$orderId})";
-            $body = "{$customer->name}様\n\nご注文ありがとうございます。\n合計金額: {$totalAmount}円\n支払い方法: {$paymentType}\n";
-            $this->sendEmail($customer->email, $subject, $body);
-            $this->log("通知メール送信完了: To={$customer->email}");
+            // 7. 通知メール送信
+            $this->notificationService->sendOrderConfirmation(
+                $customer,
+                $orderId,
+                $totalAmount,
+                $paymentType
+            );
 
-            $this->log("注文処理正常終了: 注文ID={$orderId}");
+            $this->logger->log("注文処理正常終了: 注文ID={$orderId}");
             return $orderId;
 
         } catch (OrderValidationException $e) {
-            return 'ERROR: ' . $e->getMessage();
+            $this->logger->log("バリデーションエラー: " . $e->getMessage());
+            throw $e;
+        } catch (InventoryException $e) {
+            $this->logger->log("在庫エラー: " . $e->getMessage());
+            throw $e;
+        } catch (PaymentException $e) {
+            $this->logger->log("決済エラー: " . $e->getMessage());
+            throw $e;
         }
     }
 
-    private function sendEmail(string $to, string $subject, string $body): void
-    {
-        // ここで実際は処理をおこなう（省略）
-        $this->log("[Internal] メール送信 (To={$to}, Subject={$subject})");
-    }
-
-    private function log(string $msg): void
-    {
-        $timestamp = (new DateTime())->format(DateTime::ATOM);
-        echo "[{$timestamp}] {$msg}\n";
+    private function calculateTotalAmount(array $items): float {
+        return array_reduce($items, function($total, $item) {
+            return $total + ($item->product->price * $item->quantity);
+        }, 0.0);
     }
 }
+
+// 例外クラス
+class InventoryException extends Exception {}
 
 // --- PHPUnit テストクラス ---
 use PHPUnit\Framework\TestCase;
