@@ -41,7 +41,6 @@ class OrderItem {
 class OrderProcessor
 {
     private array $productInventory = [];
-    private array $orderLog          = [];
 
     public function __construct()
     {
