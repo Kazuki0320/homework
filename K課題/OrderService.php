@@ -80,7 +80,12 @@ class InventoryService
 {
 	private array $productInventory;
 	
-	public function checkStock(array $items): bool
+	public function __construct(array $initialInventory)
+	{
+		$this->productInventory = $initialInventory;
+	}
+
+	public function checkStock(array $items): void
 	{
 		foreach ($items as $item) {
 				if ($item->product === null || empty($item->product->id) || $item->quantity <= 0) {
@@ -93,11 +98,9 @@ class InventoryService
 						throw new InventoryException("ERROR: Insufficient stock for product {$item->product->id}");
 				}
 		}
-
-		return true;
 	}
 
-	public function updateStock(aray $items): void
+	public function updateStock(array $items): void
 	{
 		foreach ($items as $item) {
 			$this->productInventory[$item->product->id] -= $item->quantity;
