@@ -119,9 +119,68 @@ class AmountCalculator
 	}
 }
 
-class StockChecker
-{
+// 支払い処理のインターフェース
+interface PaymentProcessor {
+    public function process(Customer $customer, float $amount): bool;
+}
 
+/**
+ * クレジットカード決済の実装
+ */
+class CreditCardPaymentProcessor implements PaymentProcessor {
+    public function process(Customer $customer, float $amount): bool {
+        try {
+            return $this->callCreditCardApi($customer->id, $amount);
+        } catch (Exception $e) {
+            throw new PaymentProcessingException('クレジットカード決済に失敗しました', 0, $e);
+        }
+    }
+
+    private function callCreditCardApi(string $customerId, float $amount): bool {
+        // クレジットカードAPIの呼び出し実装
+        return true;
+    }
+}
+
+/**
+ * 銀行振込決済の実装
+ */
+class BankTransferPaymentProcessor implements PaymentProcessor {
+    public function process(Customer $customer, float $amount): bool {
+        try {
+            // 銀行振込の処理実装
+            return true;
+        } catch (Exception $e) {
+            throw new PaymentProcessingException('銀行振込処理に失敗しました', 0, $e);
+        }
+    }
+}
+
+/**
+ * 支払い処理の例外クラス
+ */
+class PaymentException extends Exception {}
+class UnsupportedPaymentTypeException extends PaymentException {}
+class PaymentProcessingException extends PaymentException {}
+
+/**
+ * 支払い処理のファクトリークラス
+ */
+class PaymentProcessorFactory {
+    /**
+     * 支払い処理のインスタンスを生成
+     * 
+     * @param string $paymentType 支払い方法
+     * @return PaymentProcessor
+     * @throws UnsupportedPaymentTypeException
+     */
+    public static function create(string $paymentType): PaymentProcessor {
+        return match($paymentType) {
+            'CREDIT_CARD' => new CreditCardPaymentProcessor(),
+            'BANK_TRANSFER' => new BankTransferPaymentProcessor(),
+            default => throw new UnsupportedPaymentTypeException("未対応の支払い方法です: {$paymentType}")
+        };
+    }
 }
 
 class OrderCreater
@@ -145,15 +204,18 @@ class OrderService
 	private OrderValidator $validator;
 	private InventoryService $inventory;
 	private AmountCalculator $amountCalculator;
+	private PaymentProcessorFactory $paymentProcessorFactory;
 
     public function __construct (
 		OrderValidator $validator,
 		InventoryService $inventory,
 		AmountCalculator $amountCalculator,
+		PaymentProcessorFactory $paymentProcessorFactory,
 	) {
 		$this->validator = $validator;
 		$this->inventory = $inventory;
 		$this->amountCalculator = $amountCalculator;
+		$this->paymentProcessorFactory = $paymentProcessorFactory;
     }
 
     public function processNewOrder(Customer $customer, array $items, string $paymentType): string
@@ -170,6 +232,8 @@ class OrderService
 
 					$totalAmount =$this->amountCalculator->calculateTotalAmout($items);
 					$this->log("合計金額={$totalAmount}");
+
+					$this->paymentProcessorFactory->create($paymentType);
 
 					$this->inventory->updateStock($items);
 					$this->log("在庫更新完了.");
