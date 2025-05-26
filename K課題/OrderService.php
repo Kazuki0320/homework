@@ -108,9 +108,15 @@ class InventoryService
 	}
 }
 
+// 合計金額
 class AmoutCalculator
 {
-
+	public function calculateTotalAmout(array $items): float
+	{
+		return array_reduce($items, function($total, $item) {
+			return $total + ($item->product->price * $item->quantity);
+		}, 0.0);
+	}
 }
 
 class StockChecker
@@ -138,14 +144,16 @@ class OrderService
 {
 	private OrderValidator $validator;
 	private InventoryService $inventory;
+	private AmoutCalculator $amountCalculator;
 
-    public function __construct(
-			OrderValidator $validator,
-			InventoryService $inventory
-		)
-    {
-				$this->validator = $validator;
-				$this->inventory = $inventory;
+    public function __construct (
+		OrderValidator $validator,
+		InventoryService $inventory,
+		AmoutCalculator $amountCalculator,
+	) {
+		$this->validator = $validator;
+		$this->inventory = $inventory;
+		$this->amountCalculator = $amountCalculator;
     }
 
     public function processNewOrder(Customer $customer, array $items, string $paymentType): string
@@ -160,6 +168,8 @@ class OrderService
 					$this->log("在庫確認 OK.");
 
 
+					$this->amountCalculator->calculateTotalAmout($items);
+	
 					// 4. 在庫更新
 					$this->inventory->updateStock($items);
 					$this->log("在庫更新完了.");
@@ -172,11 +182,7 @@ class OrderService
 					throw $e;
 				}
 
-        // 2. 在庫確認 & 金額計算
-        $totalAmount = 0.0;
-        $totalAmount += $item->product->price * $item->quantity;
-        $this->log("在庫確認 OK. 合計金額={$totalAmount}");
-
+		$totalAmount = 0;
         // 3. 決済処理（将来的に代引にも対応したい）
         $this->log("決済処理開始: 方法={$paymentType}, 金額={$totalAmount}");
         $success = false;
