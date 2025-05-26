@@ -74,32 +74,32 @@ class OrderValidator
 	}
 }
 
-class Confirm
+class InventoryService
 {
 
 }
 
-class Amout
+class AmoutCalculator
 {
 
 }
 
-class Process
+class StockChecker
 {
 
 }
 
-class Update
+class OrderCreater
 {
 
 }
 
-class CreateOrder
+class Notifier
 {
 
 }
 
-class NotificationMail
+class LoggerInterface
 {
 
 }
@@ -130,12 +130,13 @@ class OrderService
 
 				try {
 					$this->validator->validateOrder($customer, $items, $paymentType);
+					$this->log("入力検証 OK.");
+
 				} catch (OrderValidatorException $e) {
 					$this->log("バリデーションエラー: " . $e->getMessage());
 					throw $e;
 				}
 
-				$this->log("入力検証 OK.");
         // 2. 在庫確認 & 金額計算
         $totalAmount = 0.0;
         foreach ($items as $item) {
