@@ -233,7 +233,10 @@ class OrderService
 					$totalAmount =$this->amountCalculator->calculateTotalAmout($items);
 					$this->log("合計金額={$totalAmount}");
 
-					$this->paymentProcessorFactory->create($paymentType);
+					$processor = $this->paymentProcessorFactory->create($paymentType);
+					if (!$processor->process($customer, $totalAmount)) {
+						throw new PaymentProcessingException("決済処理に失敗しました");
+					}
 
 					$this->inventory->updateStock($items);
 					$this->log("在庫更新完了.");
