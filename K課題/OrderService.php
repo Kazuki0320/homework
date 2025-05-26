@@ -38,6 +38,7 @@ class OrderItem {
 }
 
 class OrderValidatorException extends Exception {}
+class InventoryException extends Exception {}
 
 // 1. 入力検証
 class OrderValidator
@@ -74,9 +75,34 @@ class OrderValidator
 	}
 }
 
+// 在庫管理サービス
 class InventoryService
 {
+	private array $productInventory;
+	
+	public function checkStock(array $items): bool
+	{
+		foreach ($items as $item) {
+				if ($item->product === null || empty($item->product->id) || $item->quantity <= 0) {
+						$this->log("エラー: 不正な商品情報が含まれています。");
+						throw new InventoryException('ERROR: Invalid product data in order items.');
+				}
+				$stock = $this->productInventory[$item->product->id] ?? 0;
+				if ($stock < $item->quantity) {
+						$this->log("エラー: 在庫不足 - 商品ID={$item->product->id}, 要求={$item->quantity}, 在庫={$stock}");
+						throw new InventoryException("ERROR: Insufficient stock for product {$item->product->id}");
+				}
+		}
 
+		return true;
+	}
+
+	public function updateStock(aray $items): void
+	{
+		foreach ($items as $item) {
+			$this->productInventory[$item->product->id] -= $item->quantity;
+		}
+	}
 }
 
 class AmoutCalculator
@@ -107,21 +133,16 @@ class LoggerInterface
 // --- 責務が混在しているクラス ---
 class OrderService
 {
-    private array $productInventory = [];
-    private array $orderLog          = [];
-		private OrderValidator $validator;
+	private OrderValidator $validator;
+	private InventoryService $inventory;
 
     public function __construct(
-			OrderValidator $validator
+			OrderValidator $validator,
+			InventoryService $inventory
 		)
     {
-        // 初期在庫ダミーデータ
-        $this->productInventory = [
-            'ITEM001' => 50,
-            'ITEM002' => 30,
-            'ITEM003' => 0,   // 在庫切れ
-        ];
 				$this->validator = $validator;
+				$this->inventory = $inventory;
     }
 
     public function processNewOrder(Customer $customer, array $items, string $paymentType): string
@@ -132,25 +153,25 @@ class OrderService
 					$this->validator->validateOrder($customer, $items, $paymentType);
 					$this->log("入力検証 OK.");
 
+					$this->inventory->checkStock($items);
+					$this->log("在庫確認 OK.");
+
+
+					// 4. 在庫更新
+					$this->inventory->updateStock($items);
+					$this->log("在庫更新完了.");
+
 				} catch (OrderValidatorException $e) {
+					$this->log("バリデーションエラー: " . $e->getMessage());
+					throw $e;
+				} catch (InventoryException $e) {
 					$this->log("バリデーションエラー: " . $e->getMessage());
 					throw $e;
 				}
 
         // 2. 在庫確認 & 金額計算
         $totalAmount = 0.0;
-        foreach ($items as $item) {
-            if ($item->product === null || empty($item->product->id) || $item->quantity <= 0) {
-                $this->log("エラー: 不正な商品情報が含まれています。");
-                return 'ERROR: Invalid product data in order items.';
-            }
-            $stock = $this->productInventory[$item->product->id] ?? 0;
-            if ($stock < $item->quantity) {
-                $this->log("エラー: 在庫不足 - 商品ID={$item->product->id}, 要求={$item->quantity}, 在庫={$stock}");
-                return "ERROR: Insufficient stock for product {$item->product->id}";
-            }
-            $totalAmount += $item->product->price * $item->quantity;
-        }
+        $totalAmount += $item->product->price * $item->quantity;
         $this->log("在庫確認 OK. 合計金額={$totalAmount}");
 
         // 3. 決済処理（将来的に代引にも対応したい）
@@ -171,12 +192,6 @@ class OrderService
             return 'ERROR: Payment failed.';
         }
         $this->log("決済処理成功.");
-
-        // 4. 在庫更新
-        foreach ($items as $item) {
-            $this->productInventory[$item->product->id] -= $item->quantity;
-        }
-        $this->log("在庫更新完了.");
 
         // 5. 注文ID生成 & ログ
         $orderId = 'ORD' . time();
