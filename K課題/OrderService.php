@@ -37,18 +37,16 @@ class OrderItem {
     }
 }
 
-class OrderValidatorException {}
+class OrderValidatorException extends Exception {}
 
 // 1. 入力検証
 class OrderValidator
 {
-	public function validateOrder(Customer $customer, array $items, string $paymentType): string
+	public function validateOrder(Customer $customer, array $items, string $paymentType): void
 	{
 		$this->validateCustomer($customer);
 		$this->validateItems($items);
 		$this->validatePaymentType($paymentType);
-
-		return true;
 	}
 
 	private function validateCustomer(Customer $customer)
@@ -111,8 +109,11 @@ class OrderService
 {
     private array $productInventory = [];
     private array $orderLog          = [];
+		private OrderValidator $validator;
 
-    public function __construct()
+    public function __construct(
+			OrderValidator $validator
+		)
     {
         // 初期在庫ダミーデータ
         $this->productInventory = [
@@ -120,20 +121,19 @@ class OrderService
             'ITEM002' => 30,
             'ITEM003' => 0,   // 在庫切れ
         ];
+				$this->validator = $validator;
     }
 
-    /**
-     * 注文を処理する（検証・在庫確認・価格計算・決済・更新・通知・ロギング）
-     * @param Customer|null $customer
-     * @param OrderItem[]   $items
-     * @param string|null   $paymentType
-     * @return string 注文IDまたはエラーメッセージ
-     */
     public function processNewOrder(Customer $customer, array $items, string $paymentType): string
     {
         $this->log("注文処理開始: 顧客ID=" . ($customer->id ?? 'null'));
 
-				$orderValidate = new OrderValidator();
+				try {
+					$this->validator->validateOrder($customer, $items, $paymentType);
+				} catch (OrderValidatorException $e) {
+					$this->log("バリデーションエラー: " . $e->getMessage());
+					throw $e;
+				}
 
 				$this->log("入力検証 OK.");
         // 2. 在庫確認 & 金額計算
