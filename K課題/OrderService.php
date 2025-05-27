@@ -192,12 +192,6 @@ class OrderIdGenerator {
 
 class NotificationService
 {
-	private LoggerInterface $logger;
-
-	public function __construct(LoggerInterface $logger) {
-		$this->logger = $logger;
-	}
-
 	public function sendOrderConfirmation(
 		Customer $customer,
 		string $orderId,
