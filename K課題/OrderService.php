@@ -111,7 +111,7 @@ class InventoryService
 // 合計金額
 class AmountCalculator
 {
-	public function calculateTotalAmout(array $items): float
+	public function calculateTotalAmount(array $items): float
 	{
 		return array_reduce($items, function($total, $item) {
 			return $total + ($item->product->price * $item->quantity);
@@ -259,7 +259,7 @@ class OrderService
 			$this->inventory->checkStock($items);
 			$this->logger->log("在庫確認 OK.");
 
-			$totalAmount = $this->amountCalculator->calculateTotalAmout($items);
+			$totalAmount = $this->amountCalculator->calculateTotalAmount($items);
 			$this->logger->log("合計金額={$totalAmount}");
 
 			$processor = $this->paymentProcessorFactory->create($paymentType);
