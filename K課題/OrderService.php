@@ -183,9 +183,11 @@ class PaymentProcessorFactory {
     }
 }
 
-class OrderCreater
-{
-
+// 注文IDジェネレーターサービス
+class OrderIdGenerator {
+    public function generate(): string {
+        return 'ORD' . time();
+    }
 }
 
 class Notifier
@@ -205,17 +207,20 @@ class OrderService
 	private InventoryService $inventory;
 	private AmountCalculator $amountCalculator;
 	private PaymentProcessorFactory $paymentProcessorFactory;
+	private OrderIdGenerator $orderIdGenerator;
 
     public function __construct (
 		OrderValidator $validator,
 		InventoryService $inventory,
 		AmountCalculator $amountCalculator,
 		PaymentProcessorFactory $paymentProcessorFactory,
+		OrderIdGenerator $orderIdGenerator,
 	) {
 		$this->validator = $validator;
 		$this->inventory = $inventory;
 		$this->amountCalculator = $amountCalculator;
 		$this->paymentProcessorFactory = $paymentProcessorFactory;
+		$this->$orderIdGenerator = $orderIdGenerator;
     }
 
     public function processNewOrder(Customer $customer, array $items, string $paymentType): string
@@ -237,9 +242,13 @@ class OrderService
 					if (!$processor->process($customer, $totalAmount)) {
 						throw new PaymentProcessingException("決済処理に失敗しました");
 					}
+					$this->log("決済処理成功.");
 
 					$this->inventory->updateStock($items);
 					$this->log("在庫更新完了.");
+
+					$orderId = $this->orderIdGenerator->generate();
+					$this->log("注文確定: 注文ID={$orderId}");
 
 				} catch (OrderValidatorException $e) {
 					$this->log("バリデーションエラー: " . $e->getMessage());
@@ -249,28 +258,6 @@ class OrderService
 					throw $e;
 				}
 
-        // 3. 決済処理（将来的に代引にも対応したい）
-        $this->log("決済処理開始: 方法={$paymentType}, 金額={$totalAmount}");
-        $success = false;
-        if ($paymentType === 'CREDIT_CARD') {
-            $this->log("[Payment Gateway] クレジットカード決済実行 (金額={$totalAmount})");
-            $success = $this->callCreditCardApi($customer->id, $totalAmount);
-        } elseif ($paymentType === 'BANK_TRANSFER') {
-            $this->log("[Bank System] 銀行振込確認待ち");
-            $success = true;
-        } else {
-            $this->log("エラー: 未対応の支払い方法です: {$paymentType}");
-            return 'ERROR: Unsupported payment type.';
-        }
-        if (!$success) {
-            $this->log("エラー: 決済処理に失敗しました。");
-            return 'ERROR: Payment failed.';
-        }
-        $this->log("決済処理成功.");
-
-        // 5. 注文ID生成 & ログ
-        $orderId = 'ORD' . time();
-        $this->log("注文確定: 注文ID={$orderId}");
 
         // 6. 通知メール
         $subject = "ご注文ありがとうございます (注文ID: {$orderId})";
