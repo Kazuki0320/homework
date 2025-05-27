@@ -190,14 +190,33 @@ class OrderIdGenerator {
     }
 }
 
-class Notifier
+class NotificationService
 {
+	private LoggerInterface $logger;
 
+	public function __construct(LoggerInterface $logger) {
+		$this->logger = $logger;
+	}
+
+	public function sendOrderConfirmation(
+		Customer $customer,
+		string $orderId,
+		float $totalAmount,
+		string $paymentType
+	): void {
+        $subject = "ご注文ありがとうございます (注文ID: {$orderId})";
+        $body    = "{$customer->name}様\n\nご注文ありがとうございます。\n合計金額: {$totalAmount}円\n支払い方法: {$paymentType}\n";
+        $this->sendEmail($customer->email, $subject, $body);
+	}
 }
 
 class LoggerInterface
 {
-
+	public function log(string $msg): void
+	{
+		$timestamp = (new DateTime())->format(DateTime::ATOM);
+		echo "[{$timestamp}] {$msg}\n";
+	}
 }
 
 // --- 責務が混在しているクラス ---
@@ -208,84 +227,70 @@ class OrderService
 	private AmountCalculator $amountCalculator;
 	private PaymentProcessorFactory $paymentProcessorFactory;
 	private OrderIdGenerator $orderIdGenerator;
+	private NotificationService $notificationService;
+	private LoggerInterface $logger;
 
-    public function __construct (
+	public function __construct(
 		OrderValidator $validator,
 		InventoryService $inventory,
 		AmountCalculator $amountCalculator,
 		PaymentProcessorFactory $paymentProcessorFactory,
 		OrderIdGenerator $orderIdGenerator,
+		NotificationService $notificationService,
+		LoggerInterface $logger
 	) {
 		$this->validator = $validator;
 		$this->inventory = $inventory;
 		$this->amountCalculator = $amountCalculator;
 		$this->paymentProcessorFactory = $paymentProcessorFactory;
-		$this->$orderIdGenerator = $orderIdGenerator;
-    }
+		$this->orderIdGenerator = $orderIdGenerator;
+		$this->notificationService = $notificationService;
+		$this->logger = $logger;
+	}
 
-    public function processNewOrder(Customer $customer, array $items, string $paymentType): string
-    {
-        $this->log("注文処理開始: 顧客ID=" . ($customer->id ?? 'null'));
+	public function processNewOrder(Customer $customer, array $items, string $paymentType): string
+	{
+		$this->logger->log("注文処理開始: 顧客ID=" . ($customer->id ?? 'null'));
 
-				try {
-					$this->validator->validateOrder($customer, $items, $paymentType);
-					$this->log("入力検証 OK.");
+		try {
+			$this->validator->validateOrder($customer, $items, $paymentType);
+			$this->logger->log("入力検証 OK.");
 
-					$this->inventory->checkStock($items);
-					$this->log("在庫確認 OK.");
+			$this->inventory->checkStock($items);
+			$this->logger->log("在庫確認 OK.");
 
+			$totalAmount = $this->amountCalculator->calculateTotalAmout($items);
+			$this->logger->log("合計金額={$totalAmount}");
 
-					$totalAmount =$this->amountCalculator->calculateTotalAmout($items);
-					$this->log("合計金額={$totalAmount}");
+			$processor = $this->paymentProcessorFactory->create($paymentType);
+			if (!$processor->process($customer, $totalAmount)) {
+				throw new PaymentProcessingException("決済処理に失敗しました");
+			}
+			$this->logger->log("決済処理成功.");
 
-					$processor = $this->paymentProcessorFactory->create($paymentType);
-					if (!$processor->process($customer, $totalAmount)) {
-						throw new PaymentProcessingException("決済処理に失敗しました");
-					}
-					$this->log("決済処理成功.");
+			$this->inventory->updateStock($items);
+			$this->logger->log("在庫更新完了.");
 
-					$this->inventory->updateStock($items);
-					$this->log("在庫更新完了.");
+			$orderId = $this->orderIdGenerator->generate();
+			$this->logger->log("注文確定: 注文ID={$orderId}");
 
-					$orderId = $this->orderIdGenerator->generate();
-					$this->log("注文確定: 注文ID={$orderId}");
+			$this->notificationService->sendOrderConfirmation($customer, $orderId, $totalAmount, $paymentType);
+			$this->logger->log("通知メール送信完了: To={$customer->email}");
 
-				} catch (OrderValidatorException $e) {
-					$this->log("バリデーションエラー: " . $e->getMessage());
-					throw $e;
-				} catch (InventoryException $e) {
-					$this->log("バリデーションエラー: " . $e->getMessage());
-					throw $e;
-				}
+			$this->logger->log("注文処理正常終了: 注文ID={$orderId}");
+			return $orderId;
 
-
-        // 6. 通知メール
-        $subject = "ご注文ありがとうございます (注文ID: {$orderId})";
-        $body    = "{$customer->name}様\n\nご注文ありがとうございます。\n合計金額: {$totalAmount}円\n支払い方法: {$paymentType}\n";
-        $this->sendEmail($customer->email, $subject, $body);
-        $this->log("通知メール送信完了: To={$customer->email}");
-
-        $this->log("注文処理正常終了: 注文ID={$orderId}");
-        return $orderId;
-    }
-
-    private function callCreditCardApi(string $customerId, float $amount): bool
-    {
-        // ここで実際は処理をおこなう（省略）
-        return true;
-    }
-
-    private function sendEmail(string $to, string $subject, string $body): void
-    {
-        // ここで実際は処理をおこなう（省略）
-        $this->log("[Internal] メール送信 (To={$to}, Subject={$subject})");
-    }
-
-    private function log(string $msg): void
-    {
-        $timestamp = (new DateTime())->format(DateTime::ATOM);
-        echo "[{$timestamp}] {$msg}\n";
-    }
+		} catch (OrderValidatorException $e) {
+			$this->logger->log("バリデーションエラー: " . $e->getMessage());
+			throw $e;
+		} catch (InventoryException $e) {
+			$this->logger->log("在庫エラー: " . $e->getMessage());
+			throw $e;
+		} catch (PaymentProcessingException $e) {
+			$this->logger->log("決済エラー: " . $e->getMessage());
+			throw $e;
+		}
+	}
 }
 
 // --- PHPUnit テストクラス ---
