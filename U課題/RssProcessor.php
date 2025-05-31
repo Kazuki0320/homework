@@ -97,7 +97,30 @@ class RssParser {
     }
 }
 
-// ... existing code ...
+class RssValidator {
+	public function validate(array $items): void {
+			// 処理は後で実装
+	}
+}
+
+class TitleCleaner {
+	public function clean(RssItem $item): RssItem {
+			// 処理は後で実装
+			return $item;
+	}
+}
+
+class ConsoleOutput {
+	public function print(array $items): void {
+			// 処理は後で実装
+	}
+}
+
+class FileSaver {
+	public function save(array $items, string $filename): void {
+			// 処理は後で実装
+	}
+}
 
 class RssProcessor {
     private RssFetcher $fetcher;
