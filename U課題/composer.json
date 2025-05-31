@@ -1,0 +1,7 @@
+{
+    "name": "u-kadai/test",
+    "description": "U課題のテスト環境",
+    "require": {
+        "phpunit/phpunit": "^10.0"
+    }
+}
