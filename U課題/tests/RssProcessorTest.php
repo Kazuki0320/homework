@@ -273,4 +273,66 @@ XML;
         // 処理実行
         $this->processor->process('https://tech.uzabase.com/rss');
     }
+
+    /**
+     * ファイル保存処理のテスト
+     */
+    public function testFileSaving(): void
+    {
+        // テスト用の一時ファイル名を生成
+        $tempFile = sys_get_temp_dir() . '/rss_test_' . uniqid() . '.txt';
+
+        // テスト用のRSSアイテムを作成
+        $items = [
+            new RssItem(
+                'テストタイトル1',
+                'https://example.com/1',
+                'テスト説明1',
+                '2024-03-20 10:00:00',
+                'guid1',
+                ['カテゴリー1', 'カテゴリー2']
+            ),
+            new RssItem(
+                'テストタイトル2',
+                'https://example.com/2',
+                'テスト説明2'
+            )
+        ];
+
+        // 実際のFileSaverインスタンスを作成
+        $saver = new FileSaver();
+
+        // ファイルに保存
+        $saver->save($items, $tempFile);
+
+        // ファイルが作成されたことを確認
+        $this->assertFileExists($tempFile);
+
+        // ファイルの内容を確認
+        $content = file_get_contents($tempFile);
+        $this->assertStringContainsString('テストタイトル1', $content);
+        $this->assertStringContainsString('https://example.com/1', $content);
+        $this->assertStringContainsString('テスト説明1', $content);
+        $this->assertStringContainsString('2024-03-20 10:00:00', $content);
+        $this->assertStringContainsString('カテゴリー1, カテゴリー2', $content);
+        $this->assertStringContainsString('テストタイトル2', $content);
+
+        // テスト後のクリーンアップ
+        if (file_exists($tempFile)) {
+            unlink($tempFile);
+        }
+    }
+
+    /**
+     * ファイル保存のエラーケースのテスト
+     */
+    public function testFileSavingError(): void
+    {
+        // 書き込み権限のないディレクトリにファイルを作成しようとする
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('ファイル保存中にエラーが発生しました');
+
+        $saver = new FileSaver();
+        $saver->save([new RssItem('テスト', 'https://example.com', 'テスト')], '/root/test.txt');
+    }
 } 

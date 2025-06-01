@@ -215,10 +215,43 @@ class ContentCleaner {
     }
 }
 
+/**
+ * RSSアイテムをファイルに保存するクラス
+ */
 class FileSaver {
-	public function save(array $items, string $filename): void {
-			// 処理は後で実装
-	}
+    /**
+     * RSSアイテムをテキストファイルに保存
+     * 
+     * @param array $items 保存するRssItemの配列
+     * @param string $filename 保存先のファイル名
+     * @throws Exception ファイルの書き込みに失敗した場合
+     */
+    public function save(array $items, string $filename): void {
+        try {
+            $content = '';
+            foreach ($items as $item) {
+                // 各アイテムの内容を整形
+                $content .= "タイトル: " . $item->title . "\n";
+                $content .= "リンク: " . $item->link . "\n";
+                $content .= "説明: " . $item->description . "\n";
+                if (!empty($item->pubDate)) {
+                    $content .= "公開日: " . $item->pubDate . "\n";
+                }
+                if (!empty($item->categories)) {
+                    $content .= "カテゴリー: " . implode(", ", $item->categories) . "\n";
+                }
+                $content .= str_repeat("-", 50) . "\n\n";
+            }
+
+            // ファイルに書き込み
+            $result = file_put_contents($filename, $content);
+            if ($result === false) {
+                throw new Exception("ファイルの書き込みに失敗しました: " . $filename);
+            }
+        } catch (Exception $e) {
+            throw new Exception("ファイル保存中にエラーが発生しました: " . $e->getMessage());
+        }
+    }
 }
 
 /**
