@@ -4,13 +4,24 @@ class RssItem {
     public string $title;
     public string $link;
     public string $description;
-    public string $source;
+    public string $pubDate;
+    public string $guid;
+    public ?array $categories;
 
-    public function __construct(string $title, string $link = '', string $description = '', string $source = '') {
+    public function __construct(
+        string $title,
+        string $link = '',
+        string $description = '',
+        string $pubDate = '',
+        string $guid = '',
+        array $categories = []
+    ) {
         $this->title = $title;
         $this->link = $link;
         $this->description = $description;
-        $this->source = $source;
+        $this->pubDate = $pubDate;
+        $this->guid = $guid;
+        $this->categories = $categories;
     }
 }
 
@@ -64,10 +75,22 @@ class RssParser {
         }
 
         foreach ($rss->channel->item as $item) {
+            // カテゴリーの取得
+            $categories = [];
+            if (isset($item->category)) {
+                foreach ($item->category as $category) {
+                    $categories[] = (string)$category;
+                }
+            }
+						
+
             $items[] = new RssItem(
                 (string)$item->title,
                 (string)$item->link,
-                (string)$item->description
+                (string)$item->description,
+                (string)$item->pubDate,
+                (string)$item->guid,
+                $categories
             );
         }
         return $items;
@@ -75,21 +98,17 @@ class RssParser {
 
     /**
      * 複数のXMLコンテンツを解析
-     * @param array $contents URLとXMLコンテンツのマップ
+     * @param array $contents XMLコンテンツの配列
      * @return array 全てのRSSアイテムの配列
      */
     public function parseMultiple(array $contents): array {
         $allItems = [];
-        foreach ($contents as $url => $content) {
+        foreach ($contents as $content) {
             try {
                 $items = $this->parse($content);
-                // ソース情報を追加
-                foreach ($items as $item) {
-                    $item->source = $url;
-                }
                 $allItems = array_merge($allItems, $items);
             } catch (Exception $e) {
-                error_log("Failed to parse RSS from: $url - " . $e->getMessage());
+                error_log("Failed to parse RSS content: " . $e->getMessage());
                 continue;
             }
         }
@@ -97,23 +116,103 @@ class RssParser {
     }
 }
 
+/**
+ * バリデーションエラーを表す例外クラス
+ */
+class ValidationException extends Exception {}
+
 class RssValidator {
-	public function validate(array $items): void {
-			// 処理は後で実装
-	}
+    /**
+     * RSSアイテムの配列を検証
+     * @param array $items RssItemの配列
+     * @throws ValidationException バリデーションエラーが発生した場合
+     */
+    public function validate(array $items): void {
+        if (empty($items)) {
+            throw new ValidationException('RSSアイテムが空です');
+        }
+
+        foreach ($items as $index => $item) {
+            if (!$item instanceof RssItem) {
+                throw new ValidationException("インデックス {$index} のアイテムがRssItemクラスではありません");
+            }
+
+            // 必須項目の存在確認
+            if (empty($item->title)) {
+                throw new ValidationException("インデックス {$index} のアイテムのタイトルが空です");
+            }
+
+            // URLの形式検証
+            if (!empty($item->link) && !filter_var($item->link, FILTER_VALIDATE_URL)) {
+                throw new ValidationException("インデックス {$index} のアイテムのリンクが無効なURLです");
+            }
+
+            // GUIDの存在確認
+            if (empty($item->guid)) {
+                throw new ValidationException("インデックス {$index} のアイテムのGUIDが空です");
+            }
+
+            // 日付形式の検証
+            if (!empty($item->pubDate) && strtotime($item->pubDate) === false) {
+                throw new ValidationException("インデックス {$index} のアイテムの公開日が無効な形式です");
+            }
+        }
+    }
 }
 
-class TitleCleaner {
-	public function clean(RssItem $item): RssItem {
-			// 処理は後で実装
-			return $item;
-	}
-}
+/**
+ * RSSコンテンツのクリーニングを行うクラス
+ */
+class ContentCleaner {
+    /**
+     * 指定された文字列を削除する対象フィールド
+     */
+    private array $targetFields = ['title', 'description', 'category'];
 
-class ConsoleOutput {
-	public function print(array $items): void {
-			// 処理は後で実装
-	}
+    /**
+     * 削除する文字列のパターン
+     */
+    private string $removePattern = 'NewsPicks';
+
+    /**
+     * RSSアイテムの内容をクリーニング
+     * @param RssItem $item クリーニング対象のアイテム
+     * @return RssItem クリーニング済みのアイテム
+     */
+    public function clean(RssItem $item): RssItem {
+        // 各対象フィールドに対してクリーニングを実行
+        foreach ($this->targetFields as $field) {
+            if (isset($item->$field)) {
+                $item->$field = $this->cleanText($item->$field);
+            }
+        }
+
+        // カテゴリーのクリーニング
+        if (!empty($item->categories)) {
+            $item->categories = array_map(
+                fn($category) => $this->cleanText($category),
+                $item->categories
+            );
+        }
+
+        return $item;
+    }
+
+    /**
+     * テキストから指定パターンを削除し、整形する
+     * @param string $text クリーニング対象のテキスト
+     * @return string クリーニング済みのテキスト
+     */
+    private function cleanText(string $text): string {
+        // 指定パターンの削除
+        $text = str_replace($this->removePattern, '', $text);
+
+        // 余分な空白の削除と整形
+        $text = trim($text);
+        $text = preg_replace('/\s+/', ' ', $text);
+        
+        return $text;
+    }
 }
 
 class FileSaver {
@@ -122,27 +221,52 @@ class FileSaver {
 	}
 }
 
+/**
+ * 標準出力を管理するクラス
+ */
+class ConsoleOutput {
+    /**
+     * RSSアイテムを標準出力に表示
+     * @param array $items 表示するRssItemの配列
+     */
+    public function display(array $items): void {
+        foreach ($items as $item) {
+            echo $item->title . "\n";
+            echo $item->description . "\n";
+            echo str_repeat('-', 50) . "\n";
+        }
+    }
+
+    /**
+     * エラーメッセージを標準エラー出力に表示
+     * @param string $message エラーメッセージ
+     */
+    public function displayError(string $message): void {
+        fwrite(STDERR, $message . "\n");
+    }
+}
+
 class RssProcessor {
     private RssFetcher $fetcher;
     private RssParser $parser;
     private RssValidator $validator;
-    private TitleCleaner $cleaner;
-    private ConsoleOutput $console;
+    private ContentCleaner $cleaner;
+    private ConsoleOutput $output;
     private FileSaver $saver;
 
     public function __construct(
         RssFetcher $fetcher,
         RssParser $parser,
         RssValidator $validator,
-        TitleCleaner $cleaner,
-        ConsoleOutput $console,
+        ContentCleaner $cleaner,
+        ConsoleOutput $output,
         FileSaver $saver
     ) {
         $this->fetcher = $fetcher;
         $this->parser = $parser;
         $this->validator = $validator;
         $this->cleaner = $cleaner;
-        $this->console = $console;
+        $this->output = $output;
         $this->saver = $saver;
     }
 
@@ -151,23 +275,32 @@ class RssProcessor {
      * @param string $url RSSフィードのURL
      */
     public function process(string $url): void {
-        // 1. RSSフィードを取得
-        $content = $this->fetcher->fetch($url);
+        try {
+            // 1. RSSフィードを取得
+            $content = $this->fetcher->fetch($url);
 
-        // 2. XMLを解析
-        $items = $this->parser->parse($content);
+            // 2. XMLを解析
+            $items = $this->parser->parse($content);
 
-        // 3. バリデーション
-        $this->validator->validate($items);
+            // 3. バリデーション
+            $this->validator->validate($items);
 
-        // 4. タイトルのクリーニング
-        $cleanedItems = array_map(fn($item) => $this->cleaner->clean($item), $items);
+            // 4. タイトルのクリーニング
+            $cleanedItems = array_map(fn($item) => $this->cleaner->clean($item), $items);
 
-        // 5. 結果を表示
-        $this->console->print($cleanedItems);
+            // 5. ファイルに保存
+            $this->saver->save($cleanedItems, 'output.txt');
 
-        // 6. ファイルに保存
-        $this->saver->save($cleanedItems, 'output.txt');
+            // 6. 標準出力に結果を表示
+            $this->output->display($cleanedItems);
+
+        } catch (ValidationException $e) {
+            // バリデーションエラーの場合
+            $this->output->displayError("バリデーションエラー: " . $e->getMessage());
+        } catch (Exception $e) {
+            // その他のエラーの場合
+            $this->output->displayError("エラーが発生しました: " . $e->getMessage());
+        }
     }
 
     /**
@@ -175,22 +308,31 @@ class RssProcessor {
      * @param array $urls RSSフィードのURL配列
      */
     public function processMultiple(array $urls): void {
-        // 1. 複数のRSSフィードを取得
-        $contents = $this->fetcher->fetchMultiple($urls);
+        try {
+            // 1. 複数のRSSフィードを取得
+            $contents = $this->fetcher->fetchMultiple($urls);
 
-        // 2. 取得したコンテンツを解析
-        $items = $this->parser->parseMultiple($contents);
+            // 2. 取得したコンテンツを解析
+            $items = $this->parser->parseMultiple($contents);
 
-        // 3. バリデーション
-        $this->validator->validate($items);
+            // 3. バリデーション
+            $this->validator->validate($items);
 
-        // 4. タイトルのクリーニング
-        $cleanedItems = array_map(fn($item) => $this->cleaner->clean($item), $items);
+            // 4. タイトルのクリーニング
+            $cleanedItems = array_map(fn($item) => $this->cleaner->clean($item), $items);
 
-        // 5. 結果を表示
-        $this->console->print($cleanedItems);
+            // 5. ファイルに保存
+            $this->saver->save($cleanedItems, 'output.txt');
 
-        // 6. ファイルに保存
-        $this->saver->save($cleanedItems, 'output.txt');
+            // 6. 標準出力に結果を表示
+            $this->output->display($cleanedItems);
+
+        } catch (ValidationException $e) {
+            // バリデーションエラーの場合
+            $this->output->displayError("バリデーションエラー: " . $e->getMessage());
+        } catch (Exception $e) {
+            // その他のエラーの場合
+            $this->output->displayError("エラーが発生しました: " . $e->getMessage());
+        }
     }
 }
