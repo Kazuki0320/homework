@@ -24,7 +24,6 @@ class RssItem {
         $this->categories = $categories;
     }
 
-    // Getters
     public function getTitle(): string
     {
         return $this->title;
@@ -55,7 +54,6 @@ class RssItem {
         return $this->categories;
     }
 
-    // Setters
     public function setTitle(string $title): void
     {
         $this->title = $title;
@@ -97,7 +95,7 @@ class RssFetcher {
     public function fetch(string $url): string {
         $content = @file_get_contents($url);
         if ($content === false) {
-            throw new Exception("RSSフィードを取得できませんでした: $url");
+            throw new Exception("指定されたURLからRSSフィードを取得できませんでした: {$url}");
         }
         return $content;
     }
@@ -113,8 +111,7 @@ class RssFetcher {
             try {
                 $contents[$url] = $this->fetch($url);
             } catch (Exception $e) {
-                // エラーが発生したURLをスキップして続行
-                error_log("Failed to fetch RSS from: $url - " . $e->getMessage());
+                error_log("RSSフィードの取得に失敗しました - URL: {$url} - エラー: " . $e->getMessage());
                 continue;
             }
         }
@@ -133,11 +130,10 @@ class RssParser {
         $items = [];
         $rss = @simplexml_load_string($xml);
         if ($rss === false) {
-            throw new Exception("XMLの解析に失敗しました");
+            throw new Exception("RSSフィードのXML形式が不正です。正しいXML形式であることを確認してください。");
         }
 
         foreach ($rss->channel->item as $item) {
-            // カテゴリーの取得
             $categories = [];
             if (isset($item->category)) {
                 foreach ($item->category as $category) {
@@ -170,7 +166,7 @@ class RssParser {
                 $items = $this->parse($content);
                 $allItems = array_merge($allItems, $items);
             } catch (Exception $e) {
-                error_log("Failed to parse RSS content: " . $e->getMessage());
+                error_log("RSSフィードの解析に失敗しました - エラー: " . $e->getMessage());
                 continue;
             }
         }
@@ -191,32 +187,28 @@ class RssValidator {
      */
     public function validate(array $items): void {
         if (empty($items)) {
-            throw new ValidationException('RSSアイテムが空です');
+            throw new ValidationException('RSSフィードにアイテムが含まれていません');
         }
 
         foreach ($items as $index => $item) {
             if (!$item instanceof RssItem) {
-                throw new ValidationException("インデックス {$index} のアイテムがRssItemクラスではありません");
+                throw new ValidationException("アイテム番号 {$index} の形式が不正です。RssItemクラスのインスタンスである必要があります。");
             }
 
-            // 必須項目の存在確認
             if (empty($item->getTitle())) {
-                throw new ValidationException("インデックス {$index} のアイテムのタイトルが空です");
+                throw new ValidationException("アイテム番号 {$index} のタイトルが設定されていません");
             }
 
-            // URLの形式検証
             if (!empty($item->getLink()) && !filter_var($item->getLink(), FILTER_VALIDATE_URL)) {
-                throw new ValidationException("インデックス {$index} のアイテムのリンクが無効なURLです");
+                throw new ValidationException("アイテム番号 {$index} のリンクが正しいURL形式ではありません");
             }
 
-            // GUIDの存在確認
             if (empty($item->getGuid())) {
-                throw new ValidationException("インデックス {$index} のアイテムのGUIDが空です");
+                throw new ValidationException("アイテム番号 {$index} の一意識別子（GUID）が設定されていません");
             }
 
-            // 日付形式の検証
             if (!empty($item->getPubDate()) && strtotime($item->getPubDate()) === false) {
-                throw new ValidationException("インデックス {$index} のアイテムの公開日が無効な形式です");
+                throw new ValidationException("アイテム番号 {$index} の公開日が正しい日付形式ではありません");
             }
         }
     }
@@ -226,11 +218,6 @@ class RssValidator {
  * RSSコンテンツのクリーニングを行うクラス
  */
 class ContentCleaner {
-    /**
-     * 指定された文字列を削除する対象フィールド
-     */
-    private array $targetFields = ['title', 'description', 'category'];
-
     /**
      * 削除する文字列のパターン
      */
@@ -310,7 +297,6 @@ class FileSaver implements OutputStrategyInterface {
         try {
             $content = '';
             foreach ($items as $item) {
-                // 各アイテムの内容を整形
                 $content .= "タイトル: " . $item->getTitle() . "\n";
                 $content .= "リンク: " . $item->getLink() . "\n";
                 $content .= "説明: " . $item->getDescription() . "\n";
@@ -323,13 +309,12 @@ class FileSaver implements OutputStrategyInterface {
                 $content .= str_repeat("-", 50) . "\n\n";
             }
 
-            // ファイルに書き込み
             $result = file_put_contents($this->filename, $content);
             if ($result === false) {
-                throw new Exception("ファイルの書き込みに失敗しました: " . $this->filename);
+                throw new Exception("ファイルの保存に失敗しました。保存先: {$this->filename}");
             }
         } catch (Exception $e) {
-            throw new Exception("ファイル保存中にエラーが発生しました: " . $e->getMessage());
+            throw new Exception("ファイルの保存処理中にエラーが発生しました: " . $e->getMessage());
         }
     }
 
@@ -425,10 +410,10 @@ class RssProcessor {
 
         } catch (ValidationException $e) {
             // バリデーションエラーの場合
-            $this->output->outputError("バリデーションエラー: " . $e->getMessage());
+            $this->output->outputError("データの検証でエラーが発生しました: " . $e->getMessage());
         } catch (Exception $e) {
             // その他のエラーの場合
-            $this->output->outputError("エラーが発生しました: " . $e->getMessage());
+            $this->output->outputError("処理中にエラーが発生しました: " . $e->getMessage());
         }
     }
 
@@ -458,10 +443,10 @@ class RssProcessor {
 
         } catch (ValidationException $e) {
             // バリデーションエラーの場合
-            $this->output->outputError("バリデーションエラー: " . $e->getMessage());
+            $this->output->outputError("データの検証でエラーが発生しました: " . $e->getMessage());
         } catch (Exception $e) {
             // その他のエラーの場合
-            $this->output->outputError("エラーが発生しました: " . $e->getMessage());
+            $this->output->outputError("処理中にエラーが発生しました: " . $e->getMessage());
         }
     }
 }
