@@ -1,12 +1,12 @@
 <?php
 
 class RssItem {
-    public string $title;
-    public string $link;
-    public string $description;
-    public string $pubDate;
-    public string $guid;
-    public ?array $categories;
+    private string $title;
+    private string $link;
+    private string $description;
+    private string $pubDate;
+    private string $guid;
+    private ?array $categories;
 
     public function __construct(
         string $title,
@@ -21,6 +21,68 @@ class RssItem {
         $this->description = $description;
         $this->pubDate = $pubDate;
         $this->guid = $guid;
+        $this->categories = $categories;
+    }
+
+    // Getters
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    public function getLink(): string
+    {
+        return $this->link;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    public function getPubDate(): string
+    {
+        return $this->pubDate;
+    }
+
+    public function getGuid(): string
+    {
+        return $this->guid;
+    }
+
+    public function getCategories(): ?array
+    {
+        return $this->categories;
+    }
+
+    // Setters
+    public function setTitle(string $title): void
+    {
+        $this->title = $title;
+    }
+
+    public function setLink(string $link): void
+    {
+        $this->link = $link;
+    }
+
+    public function setDescription(string $description): void
+    {
+        $this->description = $description;
+    }
+
+    public function setPubDate(string $pubDate): void
+    {
+        $this->pubDate = $pubDate;
+    }
+
+    public function setGuid(string $guid): void
+    {
+        $this->guid = $guid;
+    }
+
+    public function setCategories(array $categories): void
+    {
         $this->categories = $categories;
     }
 }
@@ -138,22 +200,22 @@ class RssValidator {
             }
 
             // 必須項目の存在確認
-            if (empty($item->title)) {
+            if (empty($item->getTitle())) {
                 throw new ValidationException("インデックス {$index} のアイテムのタイトルが空です");
             }
 
             // URLの形式検証
-            if (!empty($item->link) && !filter_var($item->link, FILTER_VALIDATE_URL)) {
+            if (!empty($item->getLink()) && !filter_var($item->getLink(), FILTER_VALIDATE_URL)) {
                 throw new ValidationException("インデックス {$index} のアイテムのリンクが無効なURLです");
             }
 
             // GUIDの存在確認
-            if (empty($item->guid)) {
+            if (empty($item->getGuid())) {
                 throw new ValidationException("インデックス {$index} のアイテムのGUIDが空です");
             }
 
             // 日付形式の検証
-            if (!empty($item->pubDate) && strtotime($item->pubDate) === false) {
+            if (!empty($item->getPubDate()) && strtotime($item->getPubDate()) === false) {
                 throw new ValidationException("インデックス {$index} のアイテムの公開日が無効な形式です");
             }
         }
@@ -180,19 +242,18 @@ class ContentCleaner {
      * @return RssItem クリーニング済みのアイテム
      */
     public function clean(RssItem $item): RssItem {
-        // 各対象フィールドに対してクリーニングを実行
-        foreach ($this->targetFields as $field) {
-            if (isset($item->$field)) {
-                $item->$field = $this->cleanText($item->$field);
-            }
-        }
+        // タイトルのクリーニング
+        $item->setTitle($this->cleanText($item->getTitle()));
+        
+        // 説明のクリーニング
+        $item->setDescription($this->cleanText($item->getDescription()));
 
         // カテゴリーのクリーニング
-        if (!empty($item->categories)) {
-            $item->categories = array_map(
+        if (!empty($item->getCategories())) {
+            $item->setCategories(array_map(
                 fn($category) => $this->cleanText($category),
-                $item->categories
-            );
+                $item->getCategories()
+            ));
         }
 
         return $item;
@@ -231,14 +292,14 @@ class FileSaver {
             $content = '';
             foreach ($items as $item) {
                 // 各アイテムの内容を整形
-                $content .= "タイトル: " . $item->title . "\n";
-                $content .= "リンク: " . $item->link . "\n";
-                $content .= "説明: " . $item->description . "\n";
-                if (!empty($item->pubDate)) {
-                    $content .= "公開日: " . $item->pubDate . "\n";
+                $content .= "タイトル: " . $item->getTitle() . "\n";
+                $content .= "リンク: " . $item->getLink() . "\n";
+                $content .= "説明: " . $item->getDescription() . "\n";
+                if (!empty($item->getPubDate())) {
+                    $content .= "公開日: " . $item->getPubDate() . "\n";
                 }
-                if (!empty($item->categories)) {
-                    $content .= "カテゴリー: " . implode(", ", $item->categories) . "\n";
+                if (!empty($item->getCategories())) {
+                    $content .= "カテゴリー: " . implode(", ", $item->getCategories()) . "\n";
                 }
                 $content .= str_repeat("-", 50) . "\n\n";
             }
@@ -264,8 +325,8 @@ class ConsoleOutput {
      */
     public function display(array $items): void {
         foreach ($items as $item) {
-            echo $item->title . "\n";
-            echo $item->description . "\n";
+            echo $item->getTitle() . "\n";
+            echo $item->getDescription() . "\n";
             echo str_repeat('-', 50) . "\n";
         }
     }

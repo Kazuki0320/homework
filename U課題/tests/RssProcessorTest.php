@@ -92,16 +92,17 @@ XML;
         
         // 各フィールドの検証
         $this->assertInstanceOf(RssItem::class, $item);
-        $this->assertEquals('NewsPicks: テスト記事', $item->title);
-        $this->assertEquals('https://tech.uzabase.com/entry/test', $item->link);
-        $this->assertEquals('NewsPicks テスト記事の説明文', $item->description);
-        $this->assertEquals('Mon, 12 May 2025 10:35:29 +0900', $item->pubDate);
-        $this->assertEquals('test-guid-1', $item->guid);
+        $this->assertEquals('NewsPicks: テスト記事', $item->getTitle());
+        $this->assertEquals('https://tech.uzabase.com/entry/test', $item->getLink());
+        $this->assertEquals('NewsPicks テスト記事の説明文', $item->getDescription());
+        $this->assertEquals('Mon, 12 May 2025 10:35:29 +0900', $item->getPubDate());
+        $this->assertEquals('test-guid-1', $item->getGuid());
         
         // カテゴリーの検証
-        $this->assertCount(2, $item->categories);
-        $this->assertEquals('NewsPicks テストカテゴリー1', $item->categories[0]);
-        $this->assertEquals('テストカテゴリー2', $item->categories[1]);
+        $this->assertCount(2, $item->getCategories());
+        $categories = $item->getCategories();
+        $this->assertEquals('NewsPicks テストカテゴリー1', $categories[0]);
+        $this->assertEquals('テストカテゴリー2', $categories[1]);
     }
 
     /**
@@ -123,9 +124,10 @@ XML;
         $cleanedItem = $this->cleaner->clean($item);
 
         // クリーニング結果の検証
-        $this->assertEquals(': テスト記事', $cleanedItem->title);
-        $this->assertEquals('テスト説明', $cleanedItem->description);
-        $this->assertEquals('カテゴリー', $cleanedItem->categories[0]);
+        $this->assertEquals(': テスト記事', $cleanedItem->getTitle());
+        $this->assertEquals('テスト説明', $cleanedItem->getDescription());
+        $categories = $cleanedItem->getCategories();
+        $this->assertEquals('カテゴリー', $categories[0]);
     }
 
     /**
@@ -213,8 +215,8 @@ XML;
         // 各アイテムの検証
         foreach ($items as $item) {
             $this->assertInstanceOf(RssItem::class, $item);
-            $this->assertNotEmpty($item->title);
-            $this->assertNotEmpty($item->guid);
+            $this->assertNotEmpty($item->getTitle());
+            $this->assertNotEmpty($item->getGuid());
         }
     }
 
