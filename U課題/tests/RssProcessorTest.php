@@ -142,11 +142,11 @@ XML;
 
         // 標準出力の期待値を設定
         $this->output->expects($this->once())
-            ->method('display')
+            ->method('output')
             ->with($this->equalTo($items));
 
         // 出力実行
-        $this->output->display($items);
+        $this->output->output($items);
     }
 
     /**
@@ -158,11 +158,11 @@ XML;
 
         // エラー出力の期待値を設定
         $this->output->expects($this->once())
-            ->method('displayError')
+            ->method('outputError')
             ->with($this->equalTo($errorMessage));
 
         // エラー出力実行
-        $this->output->displayError($errorMessage);
+        $this->output->outputError($errorMessage);
     }
 
     /**
@@ -243,7 +243,7 @@ XML;
 
         // エラー出力の期待値を設定
         $this->output->expects($this->once())
-            ->method('displayError')
+            ->method('outputError')
             ->with($this->stringContains('エラーが発生しました'));
 
         // 処理実行（例外が発生することを期待）
@@ -266,11 +266,11 @@ XML;
     {
         // モックの設定
         $this->output->expects($this->once())
-            ->method('display');
+            ->method('output');
         
         $this->saver->expects($this->once())
-            ->method('save')
-            ->with($this->isType('array'), $this->equalTo('output.txt'));
+            ->method('output')
+            ->with($this->isType('array'));
 
         // 処理実行
         $this->processor->process('https://tech.uzabase.com/rss');
@@ -302,10 +302,10 @@ XML;
         ];
 
         // 実際のFileSaverインスタンスを作成
-        $saver = new FileSaver();
+        $saver = new FileSaver($tempFile);
 
         // ファイルに保存
-        $saver->save($items, $tempFile);
+        $saver->output($items);
 
         // ファイルが作成されたことを確認
         $this->assertFileExists($tempFile);
@@ -334,7 +334,7 @@ XML;
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('ファイル保存中にエラーが発生しました');
 
-        $saver = new FileSaver();
-        $saver->save([new RssItem('テスト', 'https://example.com', 'テスト')], '/root/test.txt');
+        $saver = new FileSaver('/root/test.txt');
+        $saver->output([new RssItem('テスト', 'https://example.com', 'テスト')]);
     }
 } 

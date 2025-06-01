@@ -276,18 +276,37 @@ class ContentCleaner {
     }
 }
 
+interface OutputStrategyInterface {
+    /**
+     * RSSアイテムを出力
+     * @param array $items 出力するRssItemの配列
+     * @throws Exception 出力処理中にエラーが発生した場合
+     */
+    public function output(array $items): void;
+
+    /**
+     * エラーメッセージを出力
+     * @param string $message エラーメッセージ
+     */
+    public function outputError(string $message): void;
+}
+
 /**
  * RSSアイテムをファイルに保存するクラス
  */
-class FileSaver {
+class FileSaver implements OutputStrategyInterface {
+    private string $filename;
+
+    public function __construct(string $filename = 'output.txt') {
+        $this->filename = $filename;
+    }
+
     /**
-     * RSSアイテムをテキストファイルに保存
-     * 
-     * @param array $items 保存するRssItemの配列
-     * @param string $filename 保存先のファイル名
+     * RSSアイテムをファイルに出力
+     * @param array $items 出力するRssItemの配列
      * @throws Exception ファイルの書き込みに失敗した場合
      */
-    public function save(array $items, string $filename): void {
+    public function output(array $items): void {
         try {
             $content = '';
             foreach ($items as $item) {
@@ -305,37 +324,53 @@ class FileSaver {
             }
 
             // ファイルに書き込み
-            $result = file_put_contents($filename, $content);
+            $result = file_put_contents($this->filename, $content);
             if ($result === false) {
-                throw new Exception("ファイルの書き込みに失敗しました: " . $filename);
+                throw new Exception("ファイルの書き込みに失敗しました: " . $this->filename);
             }
         } catch (Exception $e) {
             throw new Exception("ファイル保存中にエラーが発生しました: " . $e->getMessage());
         }
+    }
+
+    /**
+     * エラーメッセージをエラーログファイルに出力
+     * @param string $message エラーメッセージ
+     */
+    public function outputError(string $message): void {
+        $errorLog = date('Y-m-d H:i:s') . " - " . $message . "\n";
+        error_log($errorLog, 3, $this->filename . '.error.log');
     }
 }
 
 /**
  * 標準出力を管理するクラス
  */
-class ConsoleOutput {
+class ConsoleOutput implements OutputStrategyInterface {
     /**
-     * RSSアイテムを標準出力に表示
-     * @param array $items 表示するRssItemの配列
+     * RSSアイテムを標準出力に出力
+     * @param array $items 出力するRssItemの配列
      */
-    public function display(array $items): void {
+    public function output(array $items): void {
         foreach ($items as $item) {
-            echo $item->getTitle() . "\n";
-            echo $item->getDescription() . "\n";
-            echo str_repeat('-', 50) . "\n";
+            echo "タイトル: " . $item->getTitle() . "\n";
+            echo "リンク: " . $item->getLink() . "\n";
+            echo "説明: " . $item->getDescription() . "\n";
+            if (!empty($item->getPubDate())) {
+                echo "公開日: " . $item->getPubDate() . "\n";
+            }
+            if (!empty($item->getCategories())) {
+                echo "カテゴリー: " . implode(", ", $item->getCategories()) . "\n";
+            }
+            echo str_repeat('-', 50) . "\n\n";
         }
     }
 
     /**
-     * エラーメッセージを標準エラー出力に表示
+     * エラーメッセージを標準エラー出力に出力
      * @param string $message エラーメッセージ
      */
-    public function displayError(string $message): void {
+    public function outputError(string $message): void {
         fwrite(STDERR, $message . "\n");
     }
 }
@@ -383,17 +418,17 @@ class RssProcessor {
             $cleanedItems = array_map(fn($item) => $this->cleaner->clean($item), $items);
 
             // 5. ファイルに保存
-            $this->saver->save($cleanedItems, 'output.txt');
+            $this->saver->output($cleanedItems);
 
             // 6. 標準出力に結果を表示
-            $this->output->display($cleanedItems);
+            $this->output->output($cleanedItems);
 
         } catch (ValidationException $e) {
             // バリデーションエラーの場合
-            $this->output->displayError("バリデーションエラー: " . $e->getMessage());
+            $this->output->outputError("バリデーションエラー: " . $e->getMessage());
         } catch (Exception $e) {
             // その他のエラーの場合
-            $this->output->displayError("エラーが発生しました: " . $e->getMessage());
+            $this->output->outputError("エラーが発生しました: " . $e->getMessage());
         }
     }
 
@@ -416,17 +451,17 @@ class RssProcessor {
             $cleanedItems = array_map(fn($item) => $this->cleaner->clean($item), $items);
 
             // 5. ファイルに保存
-            $this->saver->save($cleanedItems, 'output.txt');
+            $this->saver->output($cleanedItems);
 
             // 6. 標準出力に結果を表示
-            $this->output->display($cleanedItems);
+            $this->output->output($cleanedItems);
 
         } catch (ValidationException $e) {
             // バリデーションエラーの場合
-            $this->output->displayError("バリデーションエラー: " . $e->getMessage());
+            $this->output->outputError("バリデーションエラー: " . $e->getMessage());
         } catch (Exception $e) {
             // その他のエラーの場合
-            $this->output->displayError("エラーが発生しました: " . $e->getMessage());
+            $this->output->outputError("エラーが発生しました: " . $e->getMessage());
         }
     }
 }
