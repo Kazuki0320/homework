@@ -374,23 +374,20 @@ class RssProcessor {
     private RssParser $parser;
     private RssValidator $validator;
     private ContentCleaner $cleaner;
-    private ConsoleOutput $output;
-    private FileSaver $saver;
+    private OutputStrategyInterface $outputStrategy;
 
     public function __construct(
         RssFetcher $fetcher,
         RssParser $parser,
         RssValidator $validator,
         ContentCleaner $cleaner,
-        ConsoleOutput $output,
-        FileSaver $saver
+        OutputStrategyInterface $outputStrategy
     ) {
         $this->fetcher = $fetcher;
         $this->parser = $parser;
         $this->validator = $validator;
         $this->cleaner = $cleaner;
-        $this->output = $output;
-        $this->saver = $saver;
+        $this->outputStrategy = $outputStrategy;
     }
 
     /**
@@ -411,18 +408,13 @@ class RssProcessor {
             // 4. タイトルのクリーニング
             $cleanedItems = array_map(fn($item) => $this->cleaner->clean($item), $items);
 
-            // 5. ファイルに保存
-            $this->saver->output($cleanedItems);
-
-            // 6. 標準出力に結果を表示
-            $this->output->output($cleanedItems);
+            // 5. 出力戦略を使用して結果を出力
+            $this->outputStrategy->output($cleanedItems);
 
         } catch (ValidationException $e) {
-            // バリデーションエラーの場合
-            $this->output->outputError("データの検証でエラーが発生しました: " . $e->getMessage());
+            $this->outputStrategy->outputError("データの検証でエラーが発生しました: " . $e->getMessage());
         } catch (Exception $e) {
-            // その他のエラーの場合
-            $this->output->outputError("処理中にエラーが発生しました: " . $e->getMessage());
+            $this->outputStrategy->outputError("処理中にエラーが発生しました: " . $e->getMessage());
         }
     }
 
@@ -444,18 +436,61 @@ class RssProcessor {
             // 4. タイトルのクリーニング
             $cleanedItems = array_map(fn($item) => $this->cleaner->clean($item), $items);
 
-            // 5. ファイルに保存
-            $this->saver->output($cleanedItems);
-
-            // 6. 標準出力に結果を表示
-            $this->output->output($cleanedItems);
+            // 5. 出力戦略を使用して結果を出力
+            $this->outputStrategy->output($cleanedItems);
 
         } catch (ValidationException $e) {
-            // バリデーションエラーの場合
-            $this->output->outputError("データの検証でエラーが発生しました: " . $e->getMessage());
+            $this->outputStrategy->outputError("データの検証でエラーが発生しました: " . $e->getMessage());
         } catch (Exception $e) {
-            // その他のエラーの場合
-            $this->output->outputError("処理中にエラーが発生しました: " . $e->getMessage());
+            $this->outputStrategy->outputError("処理中にエラーが発生しました: " . $e->getMessage());
         }
+    }
+}
+
+/**
+ * テスト用のモック出力クラス
+ */
+class MockOutput implements OutputStrategyInterface {
+    private array $outputItems = [];
+    private array $errorMessages = [];
+
+    /**
+     * RSSアイテムを出力（テスト用にメモリに保存）
+     * @param array $items 出力するRssItemの配列
+     */
+    public function output(array $items): void {
+        $this->outputItems = $items;
+    }
+
+    /**
+     * エラーメッセージを出力（テスト用にメモリに保存）
+     * @param string $message エラーメッセージ
+     */
+    public function outputError(string $message): void {
+        $this->errorMessages[] = $message;
+    }
+
+    /**
+     * 出力されたアイテムを取得
+     * @return array
+     */
+    public function getOutputItems(): array {
+        return $this->outputItems;
+    }
+
+    /**
+     * 出力されたエラーメッセージを取得
+     * @return array
+     */
+    public function getErrorMessages(): array {
+        return $this->errorMessages;
+    }
+
+    /**
+     * 出力をクリア
+     */
+    public function clear(): void {
+        $this->outputItems = [];
+        $this->errorMessages = [];
     }
 }
