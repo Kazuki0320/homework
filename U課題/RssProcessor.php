@@ -221,7 +221,16 @@ class ContentCleaner {
     /**
      * 削除する文字列のパターン
      */
-    private string $removePattern = 'NewsPicks';
+    private string $removePattern;
+
+    /**
+     * コンストラクタ
+     * @param string $removePattern 削除する文字列のパターン
+     */
+    public function __construct(string $removePattern = "NewsPicks")
+    {
+        $this->removePattern = $removePattern;
+    }
 
     /**
      * RSSアイテムの内容をクリーニング
