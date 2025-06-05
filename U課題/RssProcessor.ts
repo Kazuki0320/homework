@@ -42,9 +42,9 @@ export class RssFetcherError extends Error {
 }
 
 export class RssFetcher {
-	fetch(url: string):string {
-		const fileData = fs.readFileSync(url, 'utf-8');
-		if (empty(fileData)) throw new Exception("指定されたURLからRSSフィールドを読み取りできませんでした");
+	fetch(filePath: string):string {
+		const fileData = fs.readFileSync(filePath, 'utf-8');
+		if (!fileData || fileData.trim().length === 0) throw new RssFetcherError("RSSフィールドの内容が空です");
 		console.log(fileData);
 		return fileData;
 	}
