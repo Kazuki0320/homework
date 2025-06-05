@@ -49,11 +49,15 @@ class RssCleaner {
 }
 
 interface OutputStrategyInterface {
-	
+	output(itmes: RssItem[]):void
 }
 
-class RssOutput {
-
+class RssOutput implements OutputStrategyInterface{
+	output(items: RssItem[]):void {
+		items.forEach(item => {
+			console.log(item.title);
+		})
+	}
 }
 
 class RssService {
