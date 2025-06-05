@@ -34,9 +34,17 @@ export class RssItem {
 	}
 }
 
+export class RssFetcherError extends Error {
+	constructor(message: string) {
+		super(message);
+		this.name = 'RssFetcherError';
+	}
+}
+
 export class RssFetcher {
 	fetch(url: string):string {
 		const fileData = fs.readFileSync(url, 'utf-8');
+		if (empty(fileData)) throw new Exception("指定されたURLからRSSフィールドを読み取りできませんでした");
 		console.log(fileData);
 		return fileData;
 	}
