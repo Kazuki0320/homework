@@ -49,7 +49,7 @@ class RssCleaner {
 }
 
 interface OutputStrategyInterface {
-
+	
 }
 
 class RssOutput {
@@ -63,8 +63,17 @@ class RssService {
 	private cleaner: RssCleaner;
 	private outputStrategy: OutputStrategyInterface;
 
-
-	__construct() {
-		
+	constructor(
+		fetcher: RssFetcher,
+		parser: RssParser,
+		validator: RssValidator,
+		cleaner: RssCleaner,
+		outputStrategy: OutputStrategyInterface,
+	) {
+		this.fetcher = fetcher;
+		this.parser = parser;
+		this.validator = validator;
+		this.cleaner = cleaner;
+		this.outputStrategy = outputStrategy;
 	}
 }
