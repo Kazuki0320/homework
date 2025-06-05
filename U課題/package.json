@@ -5,13 +5,17 @@
   "main": "dist/RssProcessor.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/RssProcessor.js"
+    "start": "node dist/RssProcessor.js",
+    "test": "mocha -r ts-node/register 'tests/**/*.ts'"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/mocha": "^10.0.6",
     "@types/node": "^20.11.24",
+    "mocha": "^10.3.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   }
 }

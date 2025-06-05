@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 
 /**
- * Rssフィールドから”NewsPicks”という文字列を取り除き、結果を出力する問題
+ * Rssフィールドから"NewsPicks"という文字列を取り除き、結果を出力する問題
  * 
  * 必要な処理
  * ・ 全ての処理を管理する
@@ -20,7 +20,7 @@ import * as fs from 'fs';
  * ・ RssOutput
  * ・ RssItem
  */
-class RssItem {
+export class RssItem {
 	title: string;
 	description: string;
 	link: string;
@@ -34,7 +34,7 @@ class RssItem {
 	}
 }
 
-class RssFetcher {
+export class RssFetcher {
 	fetch(url: string):string {
 		const fileData = fs.readFileSync(url, 'utf-8');
 		console.log(fileData);
@@ -42,23 +42,23 @@ class RssFetcher {
 	}
 }
 
-class RssParser {
+export class RssParser {
 
 }
 
-class RssValidator {
+export class RssValidator {
 
 }
 
-class RssCleaner {
+export class RssCleaner {
 
 }
 
-interface OutputStrategyInterface {
+export interface OutputStrategyInterface {
 	output(itmes: RssItem[]):void
 }
 
-class RssOutput implements OutputStrategyInterface{
+export class RssOutput implements OutputStrategyInterface{
 	output(items: RssItem[]):void {
 		items.forEach(item => {
 			console.log(item.title);
@@ -66,7 +66,7 @@ class RssOutput implements OutputStrategyInterface{
 	}
 }
 
-class RssService {
+export class RssService {
 	private fetcher: RssFetcher;
 	private parser: RssParser;
 	private validator: RssValidator;

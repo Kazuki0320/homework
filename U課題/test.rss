@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>テストRSSフィード</title>
+    <description>テスト用のRSSフィード</description>
+    <item>
+      <title>NewsPicks テスト記事1</title>
+      <description>これはテスト記事1の説明です。</description>
+      <link>https://example.com/article1</link>
+      <pubDate>Mon, 26 Feb 2024 09:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>NewsPicksテスト記事2</title>
+      <description>これはテスト記事2の説明です。</description>
+      <link>https://example.com/article2</link>
+      <pubDate>Mon, 26 Feb 2024 10:00:00 GMT</pubDate>
+    </item>
+  </channel>
+</rss> 
