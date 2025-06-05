@@ -1,0 +1,17 @@
+{
+  "name": "rss-processor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/RssProcessor.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/RssProcessor.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "typescript": "^5.3.3"
+  }
+}

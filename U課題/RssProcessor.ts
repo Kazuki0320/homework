@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+
 /**
  * Rssフィールドから”NewsPicks”という文字列を取り除き、結果を出力する問題
  * 
@@ -33,7 +35,11 @@ class RssItem {
 }
 
 class RssFetcher {
-
+	fetch(url: string):string {
+		const fileData = fs.readFileSync(url, 'utf-8');
+		console.log(fileData);
+		return fileData;
+	}
 }
 
 class RssParser {
@@ -79,5 +85,10 @@ class RssService {
 		this.validator = validator;
 		this.cleaner = cleaner;
 		this.outputStrategy = outputStrategy;
+	}
+
+	run(url: string) {
+		// ここに処理を追記
+		this.fetcher.fetch(url);
 	}
 }
