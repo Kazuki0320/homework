@@ -19,7 +19,17 @@
  * ・ RssItem
  */
 class RssItem {
+	title: string;
+	description: string;
+	link: string;
+	pubDate: string;
 
+	constructor(title:string, description: string, link: string, pubDate: string) {
+		this.title = title;
+		this.description = description;
+		this.link = link;
+		this.pubDate = pubDate;
+	}
 }
 
 class RssFetcher {
