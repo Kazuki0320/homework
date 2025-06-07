@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+const { XMLParser } = require("fast-xml-parser");
 
 /**
  * Rssフィールドから"NewsPicks"という文字列を取り除き、結果を出力する問題
@@ -20,17 +21,29 @@ import * as fs from 'fs';
  * ・ RssOutput
  * ・ RssItem
  */
+
 export class RssItem {
 	title: string;
 	description: string;
 	link: string;
 	pubDate: string;
+	guid: string;
+	categories: string[];
 
-	constructor(title:string, description: string, link: string, pubDate: string) {
+	constructor(
+		title: string,
+		link: string,
+		description: string,
+		pubDate: string,
+		guid: string = '',
+		categories: string[] = []
+	) {
 		this.title = title;
-		this.description = description;
 		this.link = link;
+		this.description = description;
 		this.pubDate = pubDate;
+		this.guid = guid;
+		this.categories = categories;
 	}
 }
 
@@ -45,13 +58,64 @@ export class RssFetcher {
 	fetch(filePath: string):string {
 		const fileData = fs.readFileSync(filePath, 'utf-8');
 		if (!fileData || fileData.trim().length === 0) throw new RssFetcherError("RSSフィールドの内容が空です");
-		console.log(fileData);
+
 		return fileData;
 	}
 }
 
-export class RssParser {
+export class RssParserError extends Error {
+	constructor(message: string) {
+		super(message);
+		this.name = 'RssParserError';
+	}
+}
 
+export class RssParser {
+	/**
+	 * XML形式のRSSフィードを解析してRssItemの配列を返す
+	 * @param xmlContent XML形式のRSSフィード文字列
+	 * @returns RssItemの配列
+	 * @throws RssParserError
+	 */
+	parse(xmlContent: string): RssItem[] {
+		try {
+			const parser = new XMLParser();
+			const parsed = parser.parse(xmlContent);
+
+			if (!parsed?.rss?.channel?.item) {
+				throw new RssParserError("RSSフィードのXML形式が不正です。正しいXML形式であることを確認してください。");
+			}
+
+			const rawItems = parsed.rss.channel.item;
+			const itemsList = Array.isArray(rawItems) ? rawItems : [rawItems];
+			
+			return itemsList.map((item: any) => {
+				const categories: string[] = [];
+
+				if (item.category) {
+					if (Array.isArray(item.category)) {
+						item.category.forEach((cat: any) => categories.push(String(cat)));
+					} else {
+						categories.push(String(item.category));
+					}
+				}
+
+				return new RssItem(
+					String(item.title || ''),
+					String(item.link || ''),
+					String(item.description || ''),
+					String(item.pubDate || ''),
+					String(item.guid || ''),
+					categories
+				);
+			});
+		} catch (error) {
+			if (error instanceof RssParserError) {
+				throw error;
+			}
+			throw new RssParserError(`RSSフィードの解析に失敗しました: ${error instanceof Error ? error.message : '不明なエラー'}`);
+		}
+	}
 }
 
 export class RssValidator {
@@ -97,6 +161,8 @@ export class RssService {
 
 	run(url: string) {
 		// ここに処理を追記
-		this.fetcher.fetch(url);
+		const content = this.fetcher.fetch(url);
+
+		const items = this.parser.parse(content);
 	}
 }
